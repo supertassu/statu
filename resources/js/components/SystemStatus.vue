@@ -13,7 +13,7 @@
         <div v-else>
             <div v-if="allFine" class="notification is-success">
                 <span class="icon">
-                    <i class="fas fa-check-square"></i>
+                    <i class="fas fa-check"></i>
                 </span>
 
                 All systems operational.

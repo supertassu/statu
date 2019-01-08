@@ -2,7 +2,11 @@
     <div>
         <div class="panel-block" v-on:click="detailsOpen = !detailsOpen" style="cursor: pointer;">
             <span class="icon category-toggler">
-                <span class="fas" :class="{[detailsOpen ? 'fa-minus-square' : 'fa-plus-square']: true}"></span>
+                <span
+                    class="fas"
+                    :class="{[detailsOpen ? 'fa-minus-square' : 'fa-plus-square']: true}"
+                    style="color: rgb(127, 127, 127); margin-right: 10px;"
+                ></span>
             </span>
 
             <span class="icon" :class="{[color]: true}">

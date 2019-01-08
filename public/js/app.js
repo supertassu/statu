@@ -1813,6 +1813,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['category'],
   data: function data() {
@@ -2003,6 +2007,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
 //
 //
 //
@@ -30330,7 +30335,8 @@ var render = function() {
             (_obj[
               _vm.detailsOpen ? "fa-minus-square" : "fa-plus-square"
             ] = true),
-            _obj)
+            _obj),
+            staticStyle: { color: "rgb(127, 127, 127)", "margin-right": "10px" }
           })
         ]),
         _vm._v(" "),
@@ -30621,11 +30627,19 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "notification is-warning" }, [
-    _vm._v("\n    Loading...\n")
-  ])
+  return _vm._m(0)
 }
-var staticRenderFns = []
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "notification is-warning" }, [
+      _c("i", { staticClass: "fas fa-spinner fa-spin" }),
+      _vm._v("\n    Loading...\n")
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -30683,7 +30697,7 @@ var render = function() {
                   _vm.allFine
                     ? _c("div", { staticClass: "notification is-success" }, [
                         _c("span", { staticClass: "icon" }, [
-                          _c("i", { staticClass: "fas fa-check-square" })
+                          _c("i", { staticClass: "fas fa-check" })
                         ]),
                         _vm._v(
                           "\n\n            All systems operational.\n        "
