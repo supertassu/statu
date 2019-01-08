@@ -1,7 +1,5 @@
 <?php
 
-use App\Incident;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -13,6 +11,10 @@ use App\Incident;
 |
 */
 
-Route::get('incidents', 'IncidentApiController@index');
+Route::get('overview', 'ApiOverviewController@index');
 
-Route::get('incidents/{id}','IncidentApiController@show');
+Route::get('monitors', 'ApiMonitorController@index');
+Route::get('monitors/{id}','ApiMonitorController@show');
+
+Route::get('incidents', 'ApiIncidentController@index');
+Route::get('incidents/{id}','ApiIncidentController@show');

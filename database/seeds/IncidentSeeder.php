@@ -2,7 +2,7 @@
 
 use App\Incident;
 use App\IncidentUpdate;
-use Carbon\Carbon;
+use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 
 class IncidentSeeder extends Seeder
@@ -16,12 +16,12 @@ class IncidentSeeder extends Seeder
     {
         Incident::truncate();
 
-        $faker = \Faker\Factory::create();
+        $faker = Faker::create();
 
         $incident = Incident::create([
             'title' => $faker->sentence,
             'description' => $faker->paragraph,
-            'affected_components' => ['first', 'third', 'fifth']
+            'affected_components' => [1, 2, 3, 4]
         ]);
 
         IncidentUpdate::create([
@@ -41,8 +41,8 @@ class IncidentSeeder extends Seeder
         $incident = Incident::create([
             'title' => $faker->sentence,
             'description' => $faker->paragraph,
-            'resolved' => Carbon::now()->toDateString(),
-            'affected_components' => ['first', 'third', 'fourth']
+            'resolved' => true,
+            'affected_components' => [3, 4, 15, 27]
         ]);
 
         IncidentUpdate::create([
@@ -69,7 +69,7 @@ class IncidentSeeder extends Seeder
         Incident::create([
             'title' => $faker->sentence,
             'description' => $faker->paragraph,
-            'affected_components' => ['sixth']
+            'affected_components' => [8, 12, 23, 25]
         ]);
     }
 }

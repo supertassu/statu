@@ -10,19 +10,44 @@
 
         <loading v-if="loading"></loading>
 
-        <incident
-            v-else
-            v-for="incident in activeIncidents"
-            v-bind:incident="incident"
-            :key="incident.id"
-        ></incident>
+        <div v-else>
+            <div v-if="allFine" class="notification is-success">
+                <span class="icon">
+                    <i class="fas fa-check-square"></i>
+                </span>
 
-        <div v-if="allFine" class="notification is-success">
-            <span class="icon">
-                <i class="fas fa-check-square"></i>
-            </span>
+                All systems operational.
+            </div>
 
-            All systems operational.
+            <h1
+                class="title"
+                v-if="activeIncidents.length > 0">
+                Incidents
+            </h1>
+
+            <incident
+                v-for="incident in activeIncidents"
+                :incident="incident"
+                :key="'incident-' + incident.id"
+                :monitors="data.monitors"
+            ></incident>
+
+            <div
+                v-if="activeIncidents.length !== 0"
+                style="marginTop: 10px;"
+            ></div>
+
+            <h1 class="title">
+                All services
+            </h1>
+
+            <div class="panel">
+                <category
+                    v-for="category in categories"
+                    :category="category"
+                    :key="'category-' + category.id"
+                ></category>
+            </div>
         </div>
 
     </section>
@@ -33,7 +58,8 @@
         data() {
             return {
                 lastLoaded: null,
-                incidents: null,
+                data: null,
+                components: null,
                 loading: true,
                 failed: false
             };
@@ -41,23 +67,37 @@
 
         computed: {
             activeIncidents() {
-                if (!this.incidents) {
+                if (!this.data || !this.data.incidents) {
                     return [];
                 }
 
-                return this.incidents.filter(function(incident) {
-                    return incident.resolved === null;
+                return this.data.incidents.filter(incident => incident.resolved === '0');
+            },
+
+            categories() {
+                if (!this.data || !this.data.incidents || !this.data.categories) {
+                    return [];
+                }
+
+                return this.data.categories.map(cat => {
+                    return Object.assign({}, cat, {
+                        monitors: cat.monitors.map(it => {
+                            return Object.assign({}, it, {
+                                activeIncidents: this.data.incidents.filter(incident => {
+                                    return (incident.affected_components || []).includes(it.id) && incident.resolved === '0';
+                                })
+                            });
+                        })
+                    });
                 });
             },
 
             allFine() {
-                if (!this.incidents) {
+                if (this.loading || !this.data || !this.data.incidents) {
                     return false;
                 }
 
-                const noIncidents = this.incidents.filter(function(incident) {
-                    return incident.resolved === null;
-                }).length === 0;
+                const noIncidents = this.data.incidents.filter(incident => incident.resolved === '0').length === 0;
 
                 return noIncidents;
             }
@@ -66,9 +106,9 @@
         methods: {
             loadData: function() {
                 axios
-                    .get('/api/incidents')
+                    .get('/api/overview')
                     .then(response => {
-                        this.incidents = response.data;
+                        this.data = response.data;
                         this.lastLoaded = moment();
                     })
                     .catch(error => {

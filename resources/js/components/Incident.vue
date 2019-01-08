@@ -8,7 +8,9 @@
                     </h1>
 
                     <p>
-                        {{ incident.created_on | moment('dddd, MMMM Do YYYY, hh:mm:ss a') }} ({{ incident.created_on | moment('from', 'now') }}) <small>(ID: {{ incident.id }})</small>
+                        {{ incident.created_on | moment('dddd, MMMM Do YYYY, hh:mm:ss a') }}
+                        ({{ incident.created_on | moment('from', 'now') }})
+                        <small>(ID: {{ incident.id }})</small>
                     </p>
 
                     <p class="tags" v-if="incident.affected_components">
@@ -16,7 +18,7 @@
                             v-for="component in incident.affected_components"
                             class="tag"
                         >
-                            {{ component }}
+                            {{ getMonitorName(component) }}
                         </span>
                     </p>
 
@@ -53,7 +55,7 @@
 
 <script>
     export default {
-        props: ['incident'],
+        props: ['incident', 'monitors'],
         methods: {
             getTagColor: function (type) {
                 switch (type) {
@@ -70,6 +72,15 @@
                     default:
                         return 'light';
                 }
+            },
+            getMonitorName: function (id) {
+                const monitor = this.monitors.filter(it => it.id === id);
+
+                if (monitor.length !== 1) {
+                    return '<unknown component>';
+                }
+
+                return monitor[0].name;
             }
         }
     }

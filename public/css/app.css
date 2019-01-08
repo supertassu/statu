@@ -11172,3 +11172,11 @@ label.panel-block:hover {
   padding: 3rem 1.5rem 6rem;
 }
 
+.has-text-yellow {
+  color: #fff726;
+}
+
+.has-text-orange {
+  color: #ff921e;
+}
+

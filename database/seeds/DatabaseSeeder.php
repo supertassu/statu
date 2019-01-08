@@ -11,6 +11,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        $this->call(ComponentSeeder::class);
         $this->call(IncidentSeeder::class);
     }
 }

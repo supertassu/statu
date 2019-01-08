@@ -18,7 +18,7 @@ class IncidentUpdate extends Model
     ];
 
     public function incident() {
-        return $this->belongsTo('App\Incident');
+        return $this->belongsTo('App\Incident')->get();
     }
 
     public function getCreatedOnAttribute() {

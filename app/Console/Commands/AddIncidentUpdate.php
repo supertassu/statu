@@ -62,12 +62,7 @@ class AddIncidentUpdate extends Command
             'type' => $type
         ]);
 
-        if ($type === 'solved') {
-            $incident->resolved = Carbon::now()->toDateString();
-        } else {
-            $incident->resolved = null;
-        }
-
+        $incident->resolved = $type === 'solved';
         $incident->save();
 
         $this->info('Incident update created.');

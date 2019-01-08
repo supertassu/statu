@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateIncidentsTable extends Migration
+class CreateMonitorsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,15 @@ class CreateIncidentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('incidents', function (Blueprint $table) {
+        Schema::create('monitors', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title');
-            $table->text('description')->nullable();
-            $table->json('affected_components')->nullable();
-            $table->boolean('resolved')->default(false);
+
+            $table->integer('category_id');
+            //$table->foreign('category_id')
+            //    ->references('id')->on('categories')
+            //    ->onDelete('cascade');
+
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -30,6 +33,6 @@ class CreateIncidentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('incidents');
+        Schema::dropIfExists('monitors');
     }
 }

@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Incident;
-use Illuminate\Http\Request;
 
-class IncidentApiController extends Controller
+class ApiIncidentController extends Controller
 {
-    public function index()
-    {
+    public function index() {
         return Incident::all();
     }
 
