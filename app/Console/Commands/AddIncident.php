@@ -44,9 +44,6 @@ class AddIncident extends Command
             return $monitors;
         });
 
-        echo gettype($monitors);
-        var_dump($monitors);
-
         $title = $this->ask('What is the incident title?');
         $desc = $this->ask('What is the incident description?');
         $affected = $this->choice('What components are affected?', $monitors, null, null, true);
