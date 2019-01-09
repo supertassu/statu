@@ -39,13 +39,21 @@ class AddIncident extends Command
      */
     public function handle()
     {
-        $components = Monitor::all()->map(function ($component) {
-            return $component->name;
+        $monitors = Monitor::all()->reduce(function ($monitors, $monitor) {
+            $monitors[$monitor->id] = $monitor->id . ' ' . $monitor->name;
+            return $monitors;
         });
+
+        echo gettype($monitors);
+        var_dump($monitors);
 
         $title = $this->ask('What is the incident title?');
         $desc = $this->ask('What is the incident description?');
-        $affected = $this->choice('What components are affected?', $components, null, null, true);
+        $affected = $this->choice('What components are affected?', $monitors, null, null, true);
+
+        $affected = array_map(function ($item) {
+            return intval(explode(' ', $item)[0]);
+        }, $affected);
 
         $incident = Incident::create([
             'title' => $title,
