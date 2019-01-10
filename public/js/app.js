@@ -30391,7 +30391,7 @@ var render = function() {
       "div",
       {
         staticClass: "panel-block",
-        staticStyle: { "border-bottom": "none" },
+        staticStyle: { "border-top": "none" },
         style: { display: _vm.detailsOpen ? "block" : "none" },
         attrs: { id: "details-category-" + _vm.category.id }
       },

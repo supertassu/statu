@@ -21,12 +21,12 @@ Point your web root directory to `public/`.
 
 ## Usage
 
-```bash
-# create a new incident
-php artisan statu:add-incident
+The main admin interface uses the `artisan` CLI tool.
 
-# add an update
-php artisan statu:add-incident-update [incident id]
+To view the help menu, use
+
+```bash
+php artisan list statu
 ```
 
 ## Planned features

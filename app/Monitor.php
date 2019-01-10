@@ -9,7 +9,7 @@ class Monitor extends Model
     protected $table = 'monitors';
 
     protected $fillable = [
-        'name', 'display'
+        'name', 'category_id'
     ];
 
     public function monitor() {

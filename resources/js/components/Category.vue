@@ -28,7 +28,7 @@
         <div
             class="panel-block"
             :id="'details-category-' + category.id"
-            style="border-bottom: none;"
+            style="border-top: none;"
             :style="{display: detailsOpen ? 'block' : 'none'}"
         >
             <div
