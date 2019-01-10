@@ -1,7 +1,10 @@
-.has-text-yellow {
-    color: #fff726;
+$orange: #ff921e;
+
+.is-orange, .has-text-orange {
+    color: $orange !important;
 }
 
-.has-text-orange {
-    color: #ff921e;
+.tag.is-orange {
+    background-color: $orange !important;
+    color: findColorInvert($orange) !important;
 }

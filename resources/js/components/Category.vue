@@ -9,23 +9,18 @@
                 ></span>
             </span>
 
-            <span class="icon" :class="{[color]: true}">
-                <span class="fas fa-check" v-if="isOperational">&nbsp;</span>
-                <span class="fas fa-exclamation-triangle" v-else-if="percentageDown < 50"></span>
-                <span class="fas fa-times" v-else></span>
-            </span>
-
             <strong>{{ category.name }}</strong>
 
-            <span :class="{[color]: true}" style="position: absolute; right: 10px;">
-                <span v-if="isOperational">
+            <span :class="{['has-text-' + color]: true}" style="position: absolute; right: 10px;">
+                <span class="tag is-success" v-if="isOperational">
                     Operational
                 </span>
 
-                <span v-else>
-                    <strong :class="{[color]: true}">{{ monitorsDown }}</strong>
-                    service{{ monitorsDown === 1 ? '' : 's' }} down
-                    (out of&nbsp;{{ totalMonitors }}, {{ percentageDown }}% down)
+                <span
+                    v-else
+                    :class="{tag: true, ['is-' + color]: true}"
+                >
+                    {{ tagText }}
                 </span>
             </span>
         </div>
@@ -77,30 +72,43 @@
                 const percentage = this.percentageDown;
 
                 if (percentage === 0) {
-                    return 'has-text-success';
+                    return 'success';
                 }
 
-                if (percentage < 50) {
-                    return 'has-text-orange';
+                if (percentage === 100) {
+                    return 'danger';
                 }
 
-                return 'has-text-danger';
+                return 'orange';
+            },
+            tagText() {
+                const percentage = this.percentageDown;
+
+                if (percentage === 100) {
+                    return 'DOWN';
+                }
+
+                if (percentage === 0) {
+                    return 'OPERATIONAL';
+                }
+
+                return `OUTAGE: ${this.monitorsDown} service${this.monitorsDown === 1 ? '' : 's'} out of ${this.totalMonitors} ${this.monitorsDown === 1 ? 'is' : 'are'} down`;
             }
         },
         methods: {
             getMonitorColor: function(monitor) {
                 if (monitor.activeIncidents.length > 0) {
-                    return 'warning';
+                    return 'danger';
                 }
 
                 return 'success';
             },
             getMonitorText: function(monitor) {
                 if (monitor.activeIncidents.length > 0) {
-                    return 'OUTAGE';
+                    return 'DOWN';
                 }
 
-                return 'OPERATIONAL';
+                return 'UP';
             }
         }
     }

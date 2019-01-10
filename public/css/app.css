@@ -11172,11 +11172,20 @@ label.panel-block:hover {
   padding: 3rem 1.5rem 6rem;
 }
 
-.has-text-yellow {
-  color: #fff726;
+.is-orange,
+.has-text-orange {
+  color: #ff921e !important;
 }
 
-.has-text-orange {
-  color: #ff921e;
+.tag.is-orange {
+  background-color: #ff921e !important;
+  color: #fff !important;
+}
+
+.tag {
+  border-radius: 2px;
+  box-shadow: inset 0 -1px 0 rgba(27, 31, 35, 0.12);
+  text-transform: uppercase;
+  font-weight: 600;
 }
 

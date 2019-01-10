@@ -3,24 +3,28 @@
         <article class="media">
             <div class="media-content">
                 <div class="content">
-                    <h1 class="title" style="margin-bottom: 0;">
+                    <h1 class="title">
                         {{ incident.title }}
                     </h1>
 
-                    <p>
-                        {{ incident.created_on | moment('dddd, MMMM Do YYYY, hh:mm:ss a') }}
-                        ({{ incident.created_on | moment('from', 'now') }})
-                        <small>(ID: {{ incident.id }})</small>
-                    </p>
+                    <div class="tags" style="margin-bottom: 0;">
+                        <span class="tag is-danger">Created at</span>
+                        <span class="tag">
+                            {{ incident.created_on | moment('dddd, MMMM Do YYYY, hh:mm:ss a') }}
+                            ({{ incident.created_on | moment('from', 'now') }})
+                        </span>
+                    </div>
 
-                    <p class="tags" v-if="incident.affected_components">
+                    <div class="tags" v-if="incident.affected_components">
+                        <span class="tag is-danger">Affected components</span>
+
                         <span
                             v-for="component in incident.affected_components"
                             class="tag"
                         >
                             {{ getMonitorName(component) }}
                         </span>
-                    </p>
+                    </div>
 
                     <p>
                         {{ incident.description }}
@@ -37,17 +41,23 @@
                                 </span>
 
                                 <strong>{{ update.title }}</strong>
-                                <small>
-                                    {{ update.created_on | moment('dddd, MMMM Do YYYY, hh:mm:ss a') }} ({{ update.created_on | moment('from', 'now') }})
-                                </small>
                             </p>
 
                             <p>
                                 {{ update.description }}
+
+                                <br/>
+                                <small>
+                                    {{ update.created_on | moment('dddd, MMMM Do YYYY, hh:mm:ss a') }} ({{ update.created_on | moment('from', 'now') }})
+                                </small>
                             </p>
                         </div>
                     </div>
                 </div>
+
+                <small>
+                    Incident ID #{{ incident.id }}
+                </small>
             </div>
         </article>
     </div>

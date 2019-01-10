@@ -21,7 +21,7 @@ class IncidentSeeder extends Seeder
         $incident = Incident::create([
             'title' => $faker->sentence,
             'description' => $faker->paragraph,
-            'affected_components' => [1, 2, 3, 4]
+            'affected_components' => [1, 2, 3, 4, 5]
         ]);
 
         IncidentUpdate::create([

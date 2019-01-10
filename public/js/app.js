@@ -1812,11 +1812,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['category'],
   data: function data() {
@@ -1843,30 +1838,43 @@ __webpack_require__.r(__webpack_exports__);
       var percentage = this.percentageDown;
 
       if (percentage === 0) {
-        return 'has-text-success';
+        return 'success';
       }
 
-      if (percentage < 50) {
-        return 'has-text-orange';
+      if (percentage === 100) {
+        return 'danger';
       }
 
-      return 'has-text-danger';
+      return 'orange';
+    },
+    tagText: function tagText() {
+      var percentage = this.percentageDown;
+
+      if (percentage === 100) {
+        return 'DOWN';
+      }
+
+      if (percentage === 0) {
+        return 'OPERATIONAL';
+      }
+
+      return "OUTAGE: ".concat(this.monitorsDown, " service").concat(this.monitorsDown === 1 ? '' : 's', " out of ").concat(this.totalMonitors, " ").concat(this.monitorsDown === 1 ? 'is' : 'are', " down");
     }
   },
   methods: {
     getMonitorColor: function getMonitorColor(monitor) {
       if (monitor.activeIncidents.length > 0) {
-        return 'warning';
+        return 'danger';
       }
 
       return 'success';
     },
     getMonitorText: function getMonitorText(monitor) {
       if (monitor.activeIncidents.length > 0) {
-        return 'OUTAGE';
+        return 'DOWN';
       }
 
-      return 'OPERATIONAL';
+      return 'UP';
     }
   }
 });
@@ -1903,6 +1911,16 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2113,8 +2131,8 @@ __webpack_require__.r(__webpack_exports__);
         return Object.assign({}, cat, {
           monitors: cat.monitors.map(function (it) {
             return Object.assign({}, it, {
-              activeIncidents: _this.data.incidents.filter(function (incident) {
-                return (incident.affected_components || []).includes(it.id) && incident.resolved === '0';
+              activeIncidents: _this.activeIncidents.filter(function (incident) {
+                return (incident.affected_components || []).includes(it.id);
               })
             });
           })
@@ -2122,13 +2140,7 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     allFine: function allFine() {
-      if (this.loading || !this.data || !this.data.incidents) {
-        return false;
-      }
-
-      var noIncidents = this.data.incidents.filter(function (incident) {
-        return incident.resolved === '0';
-      }).length === 0;
+      var noIncidents = this.activeIncidents.length === 0;
       return noIncidents;
     }
   },
@@ -30340,52 +30352,36 @@ var render = function() {
           })
         ]),
         _vm._v(" "),
-        _c(
-          "span",
-          {
-            staticClass: "icon",
-            class: ((_obj$1 = {}), (_obj$1[_vm.color] = true), _obj$1)
-          },
-          [
-            _vm.isOperational
-              ? _c("span", { staticClass: "fas fa-check" }, [_vm._v(" ")])
-              : _vm.percentageDown < 50
-                ? _c("span", { staticClass: "fas fa-exclamation-triangle" })
-                : _c("span", { staticClass: "fas fa-times" })
-          ]
-        ),
-        _vm._v(" "),
         _c("strong", [_vm._v(_vm._s(_vm.category.name))]),
         _vm._v(" "),
         _c(
           "span",
           {
-            class: ((_obj$2 = {}), (_obj$2[_vm.color] = true), _obj$2),
+            class: ((_obj$1 = {}),
+            (_obj$1["has-text-" + _vm.color] = true),
+            _obj$1),
             staticStyle: { position: "absolute", right: "10px" }
           },
           [
             _vm.isOperational
-              ? _c("span", [
+              ? _c("span", { staticClass: "tag is-success" }, [
                   _vm._v("\n                Operational\n            ")
                 ])
-              : _c("span", [
-                  _c(
-                    "strong",
-                    {
-                      class: ((_obj$3 = {}), (_obj$3[_vm.color] = true), _obj$3)
-                    },
-                    [_vm._v(_vm._s(_vm.monitorsDown))]
-                  ),
-                  _vm._v(
-                    "\n                service" +
-                      _vm._s(_vm.monitorsDown === 1 ? "" : "s") +
-                      " down\n                (out of " +
-                      _vm._s(_vm.totalMonitors) +
-                      ", " +
-                      _vm._s(_vm.percentageDown) +
-                      "% down)\n            "
-                  )
-                ])
+              : _c(
+                  "span",
+                  {
+                    class: ((_obj$2 = { tag: true }),
+                    (_obj$2["is-" + _vm.color] = true),
+                    _obj$2)
+                  },
+                  [
+                    _vm._v(
+                      "\n                " +
+                        _vm._s(_vm.tagText) +
+                        "\n            "
+                    )
+                  ]
+                )
           ]
         )
       ]
@@ -30429,7 +30425,6 @@ var render = function() {
   var _obj
   var _obj$1
   var _obj$2
-  var _obj$3
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -30486,50 +30481,63 @@ var render = function() {
           "div",
           { staticClass: "content" },
           [
+            _c("h1", { staticClass: "title" }, [
+              _vm._v(
+                "\n                    " +
+                  _vm._s(_vm.incident.title) +
+                  "\n                "
+              )
+            ]),
+            _vm._v(" "),
             _c(
-              "h1",
-              { staticClass: "title", staticStyle: { "margin-bottom": "0" } },
+              "div",
+              { staticClass: "tags", staticStyle: { "margin-bottom": "0" } },
               [
-                _vm._v(
-                  "\n                    " +
-                    _vm._s(_vm.incident.title) +
-                    "\n                "
-                )
+                _c("span", { staticClass: "tag is-danger" }, [
+                  _vm._v("Created at")
+                ]),
+                _vm._v(" "),
+                _c("span", { staticClass: "tag" }, [
+                  _vm._v(
+                    "\n                        " +
+                      _vm._s(
+                        _vm._f("moment")(
+                          _vm.incident.created_on,
+                          "dddd, MMMM Do YYYY, hh:mm:ss a"
+                        )
+                      ) +
+                      "\n                        (" +
+                      _vm._s(
+                        _vm._f("moment")(_vm.incident.created_on, "from", "now")
+                      ) +
+                      ")\n                    "
+                  )
+                ])
               ]
             ),
             _vm._v(" "),
-            _c("p", [
-              _vm._v(
-                "\n                    " +
-                  _vm._s(
-                    _vm._f("moment")(
-                      _vm.incident.created_on,
-                      "dddd, MMMM Do YYYY, hh:mm:ss a"
-                    )
-                  ) +
-                  "\n                    (" +
-                  _vm._s(
-                    _vm._f("moment")(_vm.incident.created_on, "from", "now")
-                  ) +
-                  ")\n                    "
-              ),
-              _c("small", [_vm._v("(ID: " + _vm._s(_vm.incident.id) + ")")])
-            ]),
-            _vm._v(" "),
             _vm.incident.affected_components
               ? _c(
-                  "p",
+                  "div",
                   { staticClass: "tags" },
-                  _vm._l(_vm.incident.affected_components, function(component) {
-                    return _c("span", { staticClass: "tag" }, [
-                      _vm._v(
-                        "\n                        " +
-                          _vm._s(_vm.getMonitorName(component)) +
-                          "\n                    "
-                      )
-                    ])
-                  }),
-                  0
+                  [
+                    _c("span", { staticClass: "tag is-danger" }, [
+                      _vm._v("Affected components")
+                    ]),
+                    _vm._v(" "),
+                    _vm._l(_vm.incident.affected_components, function(
+                      component
+                    ) {
+                      return _c("span", { staticClass: "tag" }, [
+                        _vm._v(
+                          "\n                        " +
+                            _vm._s(_vm.getMonitorName(component)) +
+                            "\n                    "
+                        )
+                      ])
+                    })
+                  ],
+                  2
                 )
               : _vm._e(),
             _vm._v(" "),
@@ -30562,7 +30570,16 @@ var render = function() {
                           ]
                         ),
                         _vm._v(" "),
-                        _c("strong", [_vm._v(_vm._s(update.title))]),
+                        _c("strong", [_vm._v(_vm._s(update.title))])
+                      ]),
+                      _vm._v(" "),
+                      _c("p", [
+                        _vm._v(
+                          "\n                            " +
+                            _vm._s(update.description) +
+                            "\n\n                            "
+                        ),
+                        _c("br"),
                         _vm._v(" "),
                         _c("small", [
                           _vm._v(
@@ -30584,14 +30601,6 @@ var render = function() {
                               ")\n                            "
                           )
                         ])
-                      ]),
-                      _vm._v(" "),
-                      _c("p", [
-                        _vm._v(
-                          "\n                            " +
-                            _vm._s(update.description) +
-                            "\n                        "
-                        )
                       ])
                     ])
                   ])
@@ -30600,7 +30609,15 @@ var render = function() {
             })
           ],
           2
-        )
+        ),
+        _vm._v(" "),
+        _c("small", [
+          _vm._v(
+            "\n                Incident ID #" +
+              _vm._s(_vm.incident.id) +
+              "\n            "
+          )
+        ])
       ])
     ])
   ])

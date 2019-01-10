@@ -15,6 +15,7 @@ class ComponentSeeder extends Seeder
     public function run()
     {
         Monitor::truncate();
+        Category::truncate();
 
         $faker = Faker::create();
 

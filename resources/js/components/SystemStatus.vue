@@ -83,9 +83,7 @@
                     return Object.assign({}, cat, {
                         monitors: cat.monitors.map(it => {
                             return Object.assign({}, it, {
-                                activeIncidents: this.data.incidents.filter(incident => {
-                                    return (incident.affected_components || []).includes(it.id) && incident.resolved === '0';
-                                })
+                                activeIncidents: this.activeIncidents.filter(incident => (incident.affected_components || []).includes(it.id))
                             });
                         })
                     });
@@ -93,11 +91,7 @@
             },
 
             allFine() {
-                if (this.loading || !this.data || !this.data.incidents) {
-                    return false;
-                }
-
-                const noIncidents = this.data.incidents.filter(incident => incident.resolved === '0').length === 0;
+                const noIncidents = this.activeIncidents.length === 0;
 
                 return noIncidents;
             }
