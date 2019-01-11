@@ -34,7 +34,25 @@
 
             <div
                 v-if="activeIncidents.length !== 0"
-                style="marginTop: 10px;"
+                style="margin-top: 10px;"
+            ></div>
+
+            <h1
+                class="title"
+                v-if="activeMaintenance.length > 0">
+                Ongoing maintenance
+            </h1>
+
+            <maintenance
+                v-for="maintenance in activeMaintenance"
+                :maintenance="maintenance"
+                :key="'maintenance-' + maintenance.id"
+                :monitors="data.monitors"
+            ></maintenance>
+
+            <div
+                v-if="activeMaintenance.length !== 0"
+                style="margin-top: 10px;"
             ></div>
 
             <h1 class="title">
@@ -74,6 +92,14 @@
                 return this.data.incidents.filter(incident => incident.resolved === '0');
             },
 
+            activeMaintenance() {
+                if (!this.data || !this.data.maintenances) {
+                    return [];
+                }
+
+                return this.data.maintenances.filter(maintenance => maintenance.closed === '0');
+            },
+
             categories() {
                 if (!this.data || !this.data.incidents || !this.data.categories) {
                     return [];
@@ -83,7 +109,8 @@
                     return Object.assign({}, cat, {
                         monitors: cat.monitors.map(it => {
                             return Object.assign({}, it, {
-                                activeIncidents: this.activeIncidents.filter(incident => (incident.affected_components || []).includes(it.id))
+                                activeIncidents: this.activeIncidents.filter(incident => (incident.affected_components || []).includes(it.id)),
+                                activeMaintenance: this.activeMaintenance.filter(maintenance => (maintenance.affected_components || []).includes(it.id))
                             });
                         })
                     });
@@ -92,8 +119,9 @@
 
             allFine() {
                 const noIncidents = this.activeIncidents.length === 0;
+                const noMaintenance = this.activeMaintenance.length === 0;
 
-                return noIncidents;
+                return noIncidents && noMaintenance;
             }
         },
 

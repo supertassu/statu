@@ -11,17 +11,8 @@
 
             <strong>{{ category.name }}</strong>
 
-            <span :class="{['has-text-' + color]: true}" style="position: absolute; right: 10px;">
-                <span class="tag is-success" v-if="isOperational">
-                    Operational
-                </span>
+            <span style="position: absolute; right: 10px;" v-html="tag">
 
-                <span
-                    v-else
-                    :class="{tag: true, ['is-' + color]: true}"
-                >
-                    {{ tagText }}
-                </span>
             </span>
         </div>
 
@@ -50,65 +41,106 @@
 <script>
     export default {
         props: ['category'],
-        data: function() {
+        data() {
             return {
                 detailsOpen: false
             };
         },
         computed: {
-            totalMonitors: function() {
+            totalMonitors() {
                 return this.category.monitors.length;
             },
-            monitorsDown: function() {
+            isOperational() {
+                return this.monitorsDown === 0 && this.monitorsInMaintenance === 0;
+            },
+            monitorsDown() {
                 return this.category.monitors.filter(it => it.activeIncidents.length > 0).length;
             },
-            isOperational: function() {
-                return this.monitorsDown === 0;
+            monitorsInMaintenance() {
+                return this.category.monitors.filter(it => it.activeMaintenance.length > 0).length;
             },
-            percentageDown: function() {
+            percentageDown() {
                 return (this.monitorsDown / this.totalMonitors) * 100;
             },
-            color: function() {
-                const percentage = this.percentageDown;
+            percentageInMaintenance() {
+                return (this.monitorsInMaintenance / this.totalMonitors) * 100;
+            },
+            tag() {
+                if (this.isOperational) {
+                    return '<span class="tag is-success">OPERATIONAL</span>';
+                }
 
-                if (percentage === 0) {
+                let value = '';
+
+                if (this.percentageInMaintenance > 0) {
+                    value += '<span class="tag is-primary">MAINTENANCE</span> ';
+                }
+
+                if (this.percentageDown === 100) {
+                    value += '<span class="tag is-danger">DOWN</span>';
+                } else if (this.percentageDown > 0) {
+                    value += '<span class="tag is-danger">' +
+                        `OUTAGE: ${this.monitorsDown} service${this.monitorsDown === 1 ? '' : 's'} out of ` +
+                        `${this.totalMonitors} ${this.monitorsDown === 1 ? 'is' : 'are'} down</span> `;
+                }
+
+                return value;
+            },
+            color() {
+                if (this.isOperational) {
                     return 'success';
                 }
 
-                if (percentage === 100) {
+                if (this.percentageDown === 0) {
+                    // maintenance only
+                    return 'primary';
+                }
+
+                if (this.percentageDown === 100) {
                     return 'danger';
                 }
 
                 return 'orange';
             },
             tagText() {
-                const percentage = this.percentageDown;
-
-                if (percentage === 100) {
-                    return 'DOWN';
+                if (this.isOperational) {
+                    return 'OPERATIONAL';
                 }
 
-                if (percentage === 0) {
-                    return 'OPERATIONAL';
+                if (this.percentageDown === 0) {
+                    // maintenance only
+                    return 'MAINTENANCE';
+                }
+
+                if (this.percentageDown === 100) {
+                    return 'DOWN';
                 }
 
                 return `OUTAGE: ${this.monitorsDown} service${this.monitorsDown === 1 ? '' : 's'} out of ${this.totalMonitors} ${this.monitorsDown === 1 ? 'is' : 'are'} down`;
             }
         },
         methods: {
-            getMonitorColor: function(monitor) {
+            getMonitorColor(monitor) {
                 if (monitor.activeIncidents.length > 0) {
                     return 'danger';
                 }
 
+                if (monitor.activeMaintenance.length > 0) {
+                    return 'primary';
+                }
+
                 return 'success';
             },
-            getMonitorText: function(monitor) {
+            getMonitorText(monitor) {
                 if (monitor.activeIncidents.length > 0) {
                     return 'DOWN';
                 }
 
-                return 'UP';
+                if (monitor.activeMaintenance.length > 0) {
+                    return 'MAINTENANCE';
+                }
+
+                return 'OPERATIONAL';
             }
         }
     }

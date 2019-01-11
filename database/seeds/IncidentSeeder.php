@@ -15,6 +15,7 @@ class IncidentSeeder extends Seeder
     public function run()
     {
         Incident::truncate();
+        IncidentUpdate::truncate();
 
         $faker = Faker::create();
 
@@ -41,8 +42,14 @@ class IncidentSeeder extends Seeder
         $incident = Incident::create([
             'title' => $faker->sentence,
             'description' => $faker->paragraph,
-            'resolved' => true,
-            'affected_components' => [3, 4, 15, 27]
+            'affected_components' => [9, 11, 16, 17, 18, 19, 20]
+        ]);
+
+        IncidentUpdate::create([
+            'title' => $faker->sentence,
+            'description' => $faker->paragraph,
+            'incident_id' => $incident->id,
+            'type' => 'update'
         ]);
 
         IncidentUpdate::create([
@@ -57,19 +64,6 @@ class IncidentSeeder extends Seeder
             'description' => $faker->paragraph,
             'incident_id' => $incident->id,
             'type' => 'monitoring'
-        ]);
-
-        IncidentUpdate::create([
-            'title' => $faker->sentence,
-            'description' => $faker->paragraph,
-            'incident_id' => $incident->id,
-            'type' => 'solved'
-        ]);
-
-        Incident::create([
-            'title' => $faker->sentence,
-            'description' => $faker->paragraph,
-            'affected_components' => [8, 12, 23, 25]
         ]);
     }
 }

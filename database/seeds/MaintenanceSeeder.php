@@ -16,9 +16,10 @@ class MaintenanceSeeder extends Seeder
     public function run()
     {
         Maintenance::truncate();
+        MaintenanceUpdate::truncate();
 
         $faker = Faker::create();
-        
+
         $maintenance = Maintenance::create([
             'title' => implode(' ', $faker->words(2)),
             'description' => $faker->paragraph,
@@ -42,5 +43,20 @@ class MaintenanceSeeder extends Seeder
             'type' => 'monitoring'
         ]);
 
+        $maintenance = Maintenance::create([
+            'title' => implode(' ', $faker->words(2)),
+            'description' => $faker->paragraph,
+            'affected_components' => [22, 23, 25],
+            'start' => Carbon::now()->subMinutes(15)->toIso8601String(),
+            'scheduled_end' => Carbon::now()->addMinutes(30)->toIso8601String(),
+            'closed' => false
+        ]);
+
+        MaintenanceUpdate::create([
+            'title' => $faker->sentence,
+            'description' => $faker->paragraph,
+            'maintenance_id' => $maintenance->id,
+            'type' => 'update'
+        ]);
     }
 }

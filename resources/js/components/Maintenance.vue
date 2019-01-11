@@ -4,22 +4,22 @@
             <div class="media-content">
                 <div class="content">
                     <h1 class="title">
-                        {{ incident.title }}
+                        {{ maintenance.title }}
                     </h1>
 
                     <div class="tags" style="margin-bottom: 0;">
-                        <span class="tag is-danger">Created at</span>
+                        <span class="tag is-primary">Created at</span>
                         <span class="tag">
-                            {{ incident.created_on | moment('dddd, MMMM Do YYYY, hh:mm:ss a') }}
-                            ({{ incident.created_on | moment('from', 'now') }})
+                            {{ maintenance.created_on | moment('dddd, MMMM Do YYYY, hh:mm:ss a') }}
+                            ({{ maintenance.created_on | moment('from', 'now') }})
                         </span>
                     </div>
 
-                    <div class="tags" v-if="incident.affected_components">
-                        <span class="tag is-danger">Affected components</span>
+                    <div class="tags" v-if="maintenance.affected_components">
+                        <span class="tag is-primary">Affected components</span>
 
                         <span
-                            v-for="component in incident.affected_components"
+                            v-for="component in maintenance.affected_components"
                             class="tag"
                         >
                             {{ getMonitorName(component) }}
@@ -27,12 +27,12 @@
                     </div>
 
                     <p>
-                        {{ incident.description }}
+                        {{ maintenance.description }}
                     </p>
 
                     <div
-                        v-if="incident.updates"
-                        v-for="update in incident.updates"
+                        v-if="maintenance.updates"
+                        v-for="update in maintenance.updates"
                         :key="update.id">
                         <div class="notification">
                             <p>
@@ -56,7 +56,7 @@
                 </div>
 
                 <small>
-                    Incident ID #{{ incident.id }}
+                    Maintenance ID #{{ maintenance.id }}
                 </small>
             </div>
         </article>
@@ -65,7 +65,7 @@
 
 <script>
     export default {
-        props: ['incident', 'monitors'],
+        props: ['maintenance', 'monitors'],
         methods: {
             getTagColor(type) {
                 switch (type) {
