@@ -17,6 +17,9 @@
 
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
+    <script>
+        window.dateFormat = '{{ config('statu.date-format', 'MMM Do, HH:mm') }}';
+    </script>
     <script src="{{ asset('js/app.js') }}" defer></script>
 
     @yield('assets')

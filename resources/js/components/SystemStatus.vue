@@ -89,7 +89,7 @@
                     return [];
                 }
 
-                return this.data.incidents.filter(incident => incident.resolved === '0');
+                return this.data.incidents.filter(incident => !incident.resolved);
             },
 
             activeMaintenance() {
@@ -97,7 +97,7 @@
                     return [];
                 }
 
-                return this.data.maintenances.filter(maintenance => maintenance.closed === '0');
+                return this.data.maintenances.filter(maintenance => !maintenance.closed);
             },
 
             categories() {

@@ -51,13 +51,25 @@
                 return this.category.monitors.length;
             },
             isOperational() {
-                return this.monitorsDown === 0 && this.monitorsInMaintenance === 0;
+                return this.badMonitors === 0 && this.monitorsInMaintenance === 0;
+            },
+            badMonitors() {
+                return this.category.monitors.filter(it => it.activeIncidents.length > 0 || !it.last_status).length;
+            },
+            monitorsWithIncidents() {
+                return this.category.monitors.filter(it => it.activeIncidents.length > 0).length;
             },
             monitorsDown() {
-                return this.category.monitors.filter(it => it.activeIncidents.length > 0).length;
+                return this.category.monitors.filter(it => !it.last_status).length;
             },
             monitorsInMaintenance() {
                 return this.category.monitors.filter(it => it.activeMaintenance.length > 0).length;
+            },
+            badPercentage() {
+                return (this.badMonitors / this.totalMonitors) * 100;
+            },
+            percentageWithIncidents() {
+                return (this.monitorsWithIncidents / this.totalMonitors) * 100;
             },
             percentageDown() {
                 return (this.monitorsDown / this.totalMonitors) * 100;
@@ -76,53 +88,31 @@
                     value += '<span class="tag is-primary">MAINTENANCE</span> ';
                 }
 
-                if (this.percentageDown === 100) {
+                if (this.badPercentage === 100) {
                     value += '<span class="tag is-danger">DOWN</span>';
-                } else if (this.percentageDown > 0) {
-                    value += '<span class="tag is-danger">' +
-                        `OUTAGE: ${this.monitorsDown} service${this.monitorsDown === 1 ? '' : 's'} out of ` +
-                        `${this.totalMonitors} ${this.monitorsDown === 1 ? 'is' : 'are'} down</span> `;
+                } else {
+                    if (this.monitorsDown > 0) {
+                        value += '<span class="tag is-orange">' +
+                            `${this.monitorsDown} service${this.monitorsDown === 1 ? '' : 's'} out of ` +
+                            `${this.totalMonitors} ${this.monitorsDown === 1 ? 'is' : 'are'} down</span> `;
+                    }
+
+                    if (this.monitorsWithIncidents > 0) {
+                        value += '<span class="tag is-orange">' +
+                            `${this.monitorsWithIncidents} service${this.monitorsWithIncidents === 1 ? '' : 's'} out of ` +
+                            `${this.totalMonitors} ${this.monitorsWithIncidents === 1 ? 'has' : 'have'} an active incident</span> `;
+                    }
                 }
 
                 return value;
             },
-            color() {
-                if (this.isOperational) {
-                    return 'success';
-                }
-
-                if (this.percentageDown === 0) {
-                    // maintenance only
-                    return 'primary';
-                }
-
-                if (this.percentageDown === 100) {
-                    return 'danger';
-                }
-
-                return 'orange';
-            },
-            tagText() {
-                if (this.isOperational) {
-                    return 'OPERATIONAL';
-                }
-
-                if (this.percentageDown === 0) {
-                    // maintenance only
-                    return 'MAINTENANCE';
-                }
-
-                if (this.percentageDown === 100) {
-                    return 'DOWN';
-                }
-
-                return `OUTAGE: ${this.monitorsDown} service${this.monitorsDown === 1 ? '' : 's'} out of ${this.totalMonitors} ${this.monitorsDown === 1 ? 'is' : 'are'} down`;
-            }
         },
         methods: {
             getMonitorColor(monitor) {
                 if (monitor.activeIncidents.length > 0) {
                     return 'danger';
+                } else if (!monitor.last_status) {
+                    return 'orange';
                 }
 
                 if (monitor.activeMaintenance.length > 0) {
@@ -132,12 +122,14 @@
                 return 'success';
             },
             getMonitorText(monitor) {
-                if (monitor.activeIncidents.length > 0) {
+                if (monitor.activeMaintenance.length > 0) {
+                    return 'MAINTENANCE';
+                } else if (!monitor.last_status) {
                     return 'DOWN';
                 }
 
-                if (monitor.activeMaintenance.length > 0) {
-                    return 'MAINTENANCE';
+                if (monitor.activeIncidents.length > 0) {
+                    return 'ACTIVE INCIDENT';
                 }
 
                 return 'OPERATIONAL';

@@ -10,7 +10,7 @@
                     <div class="tags" style="margin-bottom: 0;">
                         <span class="tag is-danger">Created at</span>
                         <span class="tag">
-                            {{ incident.created_on | moment('dddd, MMMM Do YYYY, hh:mm:ss a') }}
+                            {{ incident.created_on | moment() }}
                             ({{ incident.created_on | moment('from', 'now') }})
                         </span>
                     </div>
@@ -48,7 +48,7 @@
 
                                 <br/>
                                 <small>
-                                    {{ update.created_on | moment('dddd, MMMM Do YYYY, hh:mm:ss a') }} ({{ update.created_on | moment('from', 'now') }})
+                                    {{ update.created_on | moment() }} ({{ update.created_on | moment('from', 'now') }})
                                 </small>
                             </p>
                         </div>

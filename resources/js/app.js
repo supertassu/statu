@@ -2,10 +2,12 @@ window.Vue = require('vue');
 window.$ = window.jQuery = require('jquery');
 
 window.moment = require('moment');
+moment.defaultFormat = window.dateFormat || 'MMM Do, HH:mm';
+
 window.axios = require('axios');
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-let token = document.head.querySelector('meta[name="csrf-token"]');
+const token = document.head.querySelector('meta[name="csrf-token"]');
 
 if (token) {
     window.axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
@@ -24,13 +26,7 @@ if (token) {
 const files = require.context('./', true, /\.vue$/i);
 files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-
-Vue.use(require('vue-moment'));
+Vue.use(require('vue-moment'), {moment});
 
 const app = new Vue({
     el: '#app'

@@ -8,10 +8,18 @@
                     </h1>
 
                     <div class="tags" style="margin-bottom: 0;">
-                        <span class="tag is-primary">Created at</span>
+                        <span class="tag is-primary">Started at</span>
                         <span class="tag">
-                            {{ maintenance.created_on | moment('dddd, MMMM Do YYYY, hh:mm:ss a') }}
-                            ({{ maintenance.created_on | moment('from', 'now') }})
+                            {{ maintenance.start | moment() }}
+                            ({{ maintenance.start | moment('from', 'now') }})
+                        </span>
+                    </div>
+
+                    <div class="tags" style="margin-bottom: 0;">
+                        <span class="tag is-primary">Scheduled end date</span>
+                        <span class="tag">
+                            {{ maintenance.scheduled_end | moment() }}
+                            ({{ maintenance.scheduled_end | moment('from', 'now') }})
                         </span>
                     </div>
 
@@ -48,7 +56,7 @@
 
                                 <br/>
                                 <small>
-                                    {{ update.created_on | moment('dddd, MMMM Do YYYY, hh:mm:ss a') }} ({{ update.created_on | moment('from', 'now') }})
+                                    {{ update.created_on | moment() }} ({{ update.created_on | moment('from', 'now') }})
                                 </small>
                             </p>
                         </div>

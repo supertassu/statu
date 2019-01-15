@@ -15,6 +15,7 @@ class Maintenance extends Model
 
     protected $casts = [
         'affected_components' => 'array',
+        'closed' => 'boolean'
     ];
 
     protected $fillable = [

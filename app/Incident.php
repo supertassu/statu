@@ -19,6 +19,7 @@ class Incident extends Model
 
     protected $casts = [
         'affected_components' => 'array',
+        'resolved' => 'boolean'
     ];
 
     public function updates() {

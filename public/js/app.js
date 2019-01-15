@@ -1815,17 +1815,33 @@ __webpack_require__.r(__webpack_exports__);
       return this.category.monitors.length;
     },
     isOperational: function isOperational() {
-      return this.monitorsDown === 0 && this.monitorsInMaintenance === 0;
+      return this.badMonitors === 0 && this.monitorsInMaintenance === 0;
+    },
+    badMonitors: function badMonitors() {
+      return this.category.monitors.filter(function (it) {
+        return it.activeIncidents.length > 0 || !it.last_status;
+      }).length;
+    },
+    monitorsWithIncidents: function monitorsWithIncidents() {
+      return this.category.monitors.filter(function (it) {
+        return it.activeIncidents.length > 0;
+      }).length;
     },
     monitorsDown: function monitorsDown() {
       return this.category.monitors.filter(function (it) {
-        return it.activeIncidents.length > 0;
+        return !it.last_status;
       }).length;
     },
     monitorsInMaintenance: function monitorsInMaintenance() {
       return this.category.monitors.filter(function (it) {
         return it.activeMaintenance.length > 0;
       }).length;
+    },
+    badPercentage: function badPercentage() {
+      return this.badMonitors / this.totalMonitors * 100;
+    },
+    percentageWithIncidents: function percentageWithIncidents() {
+      return this.monitorsWithIncidents / this.totalMonitors * 100;
     },
     percentageDown: function percentageDown() {
       return this.monitorsDown / this.totalMonitors * 100;
@@ -1844,51 +1860,27 @@ __webpack_require__.r(__webpack_exports__);
         value += '<span class="tag is-primary">MAINTENANCE</span> ';
       }
 
-      if (this.percentageDown === 100) {
+      if (this.badPercentage === 100) {
         value += '<span class="tag is-danger">DOWN</span>';
-      } else if (this.percentageDown > 0) {
-        value += '<span class="tag is-danger">' + "OUTAGE: ".concat(this.monitorsDown, " service").concat(this.monitorsDown === 1 ? '' : 's', " out of ") + "".concat(this.totalMonitors, " ").concat(this.monitorsDown === 1 ? 'is' : 'are', " down</span> ");
+      } else {
+        if (this.monitorsDown > 0) {
+          value += '<span class="tag is-orange">' + "".concat(this.monitorsDown, " service").concat(this.monitorsDown === 1 ? '' : 's', " out of ") + "".concat(this.totalMonitors, " ").concat(this.monitorsDown === 1 ? 'is' : 'are', " down</span> ");
+        }
+
+        if (this.monitorsWithIncidents > 0) {
+          value += '<span class="tag is-orange">' + "".concat(this.monitorsWithIncidents, " service").concat(this.monitorsWithIncidents === 1 ? '' : 's', " out of ") + "".concat(this.totalMonitors, " ").concat(this.monitorsWithIncidents === 1 ? 'has' : 'have', " an active incident</span> ");
+        }
       }
 
       return value;
-    },
-    color: function color() {
-      if (this.isOperational) {
-        return 'success';
-      }
-
-      if (this.percentageDown === 0) {
-        // maintenance only
-        return 'primary';
-      }
-
-      if (this.percentageDown === 100) {
-        return 'danger';
-      }
-
-      return 'orange';
-    },
-    tagText: function tagText() {
-      if (this.isOperational) {
-        return 'OPERATIONAL';
-      }
-
-      if (this.percentageDown === 0) {
-        // maintenance only
-        return 'MAINTENANCE';
-      }
-
-      if (this.percentageDown === 100) {
-        return 'DOWN';
-      }
-
-      return "OUTAGE: ".concat(this.monitorsDown, " service").concat(this.monitorsDown === 1 ? '' : 's', " out of ").concat(this.totalMonitors, " ").concat(this.monitorsDown === 1 ? 'is' : 'are', " down");
     }
   },
   methods: {
     getMonitorColor: function getMonitorColor(monitor) {
       if (monitor.activeIncidents.length > 0) {
         return 'danger';
+      } else if (!monitor.last_status) {
+        return 'orange';
       }
 
       if (monitor.activeMaintenance.length > 0) {
@@ -1898,12 +1890,14 @@ __webpack_require__.r(__webpack_exports__);
       return 'success';
     },
     getMonitorText: function getMonitorText(monitor) {
-      if (monitor.activeIncidents.length > 0) {
+      if (monitor.activeMaintenance.length > 0) {
+        return 'MAINTENANCE';
+      } else if (!monitor.last_status) {
         return 'DOWN';
       }
 
-      if (monitor.activeMaintenance.length > 0) {
-        return 'MAINTENANCE';
+      if (monitor.activeIncidents.length > 0) {
+        return 'ACTIVE INCIDENT';
       }
 
       return 'OPERATIONAL';
@@ -2142,6 +2136,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['maintenance', 'monitors'],
   methods: {
@@ -2281,7 +2283,7 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       return this.data.incidents.filter(function (incident) {
-        return incident.resolved === '0';
+        return !incident.resolved;
       });
     },
     activeMaintenance: function activeMaintenance() {
@@ -2290,7 +2292,7 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       return this.data.maintenances.filter(function (maintenance) {
-        return maintenance.closed === '0';
+        return !maintenance.closed;
       });
     },
     categories: function categories() {
@@ -30649,12 +30651,7 @@ var render = function() {
                 _c("span", { staticClass: "tag" }, [
                   _vm._v(
                     "\n                        " +
-                      _vm._s(
-                        _vm._f("moment")(
-                          _vm.incident.created_on,
-                          "dddd, MMMM Do YYYY, hh:mm:ss a"
-                        )
-                      ) +
+                      _vm._s(_vm._f("moment")(_vm.incident.created_on)) +
                       "\n                        (" +
                       _vm._s(
                         _vm._f("moment")(_vm.incident.created_on, "from", "now")
@@ -30733,12 +30730,7 @@ var render = function() {
                         _c("small", [
                           _vm._v(
                             "\n                                " +
-                              _vm._s(
-                                _vm._f("moment")(
-                                  update.created_on,
-                                  "dddd, MMMM Do YYYY, hh:mm:ss a"
-                                )
-                              ) +
+                              _vm._s(_vm._f("moment")(update.created_on)) +
                               " (" +
                               _vm._s(
                                 _vm._f("moment")(
@@ -30847,22 +30839,39 @@ var render = function() {
               { staticClass: "tags", staticStyle: { "margin-bottom": "0" } },
               [
                 _c("span", { staticClass: "tag is-primary" }, [
-                  _vm._v("Created at")
+                  _vm._v("Started at")
                 ]),
                 _vm._v(" "),
                 _c("span", { staticClass: "tag" }, [
                   _vm._v(
                     "\n                        " +
+                      _vm._s(_vm._f("moment")(_vm.maintenance.start)) +
+                      "\n                        (" +
                       _vm._s(
-                        _vm._f("moment")(
-                          _vm.maintenance.created_on,
-                          "dddd, MMMM Do YYYY, hh:mm:ss a"
-                        )
+                        _vm._f("moment")(_vm.maintenance.start, "from", "now")
                       ) +
+                      ")\n                    "
+                  )
+                ])
+              ]
+            ),
+            _vm._v(" "),
+            _c(
+              "div",
+              { staticClass: "tags", staticStyle: { "margin-bottom": "0" } },
+              [
+                _c("span", { staticClass: "tag is-primary" }, [
+                  _vm._v("Scheduled end date")
+                ]),
+                _vm._v(" "),
+                _c("span", { staticClass: "tag" }, [
+                  _vm._v(
+                    "\n                        " +
+                      _vm._s(_vm._f("moment")(_vm.maintenance.scheduled_end)) +
                       "\n                        (" +
                       _vm._s(
                         _vm._f("moment")(
-                          _vm.maintenance.created_on,
+                          _vm.maintenance.scheduled_end,
                           "from",
                           "now"
                         )
@@ -30941,12 +30950,7 @@ var render = function() {
                         _c("small", [
                           _vm._v(
                             "\n                                " +
-                              _vm._s(
-                                _vm._f("moment")(
-                                  update.created_on,
-                                  "dddd, MMMM Do YYYY, hh:mm:ss a"
-                                )
-                              ) +
+                              _vm._s(_vm._f("moment")(update.created_on)) +
                               " (" +
                               _vm._s(
                                 _vm._f("moment")(
@@ -47137,6 +47141,7 @@ webpackContext.id = "./resources/js sync recursive \\.vue$/";
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 window.$ = window.jQuery = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 window.moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");
+moment.defaultFormat = window.dateFormat || 'MMM Do, HH:mm';
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 var token = document.head.querySelector('meta[name="csrf-token"]');
@@ -47160,13 +47165,9 @@ var files = __webpack_require__("./resources/js sync recursive \\.vue$/");
 files.keys().map(function (key) {
   return Vue.component(key.split('/').pop().split('.')[0], files(key).default);
 });
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-
-Vue.use(__webpack_require__(/*! vue-moment */ "./node_modules/vue-moment/dist/vue-moment.js"));
+Vue.use(__webpack_require__(/*! vue-moment */ "./node_modules/vue-moment/dist/vue-moment.js"), {
+  moment: moment
+});
 var app = new Vue({
   el: '#app'
 });
