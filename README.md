@@ -31,7 +31,7 @@ php artisan list statu
 
 ## Planned features
 
-- Display monitors on home page
 - Incident history
 - Admin UI on web
+- some form of upcoming maintenances
 - more stuff

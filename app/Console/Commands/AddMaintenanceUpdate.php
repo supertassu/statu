@@ -2,26 +2,25 @@
 
 namespace App\Console\Commands;
 
-use App\Incident;
-use App\IncidentUpdate;
-use Carbon\Carbon;
+use App\Maintenance;
+use App\MaintenanceUpdate;
 use Illuminate\Console\Command;
 
-class AddIncidentUpdate extends Command
+class AddMaintenanceUpdate extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'statu:add-incident-update {incident : The id of the incident}';
+    protected $signature = 'statu:add-maintenance-update {maintenance : The id of the maintenance}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Creates an update for the incident';
+    protected $description = 'Creates an update for the maintenance';
 
     /**
      * Create a new command instance.
@@ -44,10 +43,10 @@ class AddIncidentUpdate extends Command
      */
     public function handle()
     {
-        $incident = Incident::find($this->argument('incident'));
+        $maintenance = Maintenance::find($this->argument('maintenance'));
 
-        if (!$incident) {
-            $this->error('Incident not found.');
+        if (!$maintenance) {
+            $this->error('Maintenance not found.');
             return null;
         }
 
@@ -55,17 +54,17 @@ class AddIncidentUpdate extends Command
         $type = $this->choice('What is the update type?', $this->updateTypesSupported, 'update');
         $desc = $this->ask('What is the update description?');
 
-        IncidentUpdate::create([
+        MaintenanceUpdate::create([
             'title' => $title,
             'description' => $desc,
-            'incident_id' => $incident->id,
+            'maintenance_id' => $maintenance->id,
             'type' => $type
         ]);
 
-        $incident->resolved = $type === 'solved';
-        $incident->save();
+        $maintenance->closed = $type === 'solved';
+        $maintenance->save();
 
-        $this->info('Incident update created.');
+        $this->info('Maintenance update created.');
         return null;
     }
 }

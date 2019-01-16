@@ -39,6 +39,11 @@
 </template>
 
 <script>
+    const MONITOR_STATUS_OPERATIONAL = 'operational';
+    const MONITOR_STATUS_MAINTENANCE = 'maintenance';
+    const MONITOR_STATUS_IS_DOWN = 'down';
+    const MONITOR_STATUS_HAS_ACTIVE_INCIDENT = 'incident';
+
     export default {
         props: ['category'],
         data() {
@@ -54,16 +59,16 @@
                 return this.badMonitors === 0 && this.monitorsInMaintenance === 0;
             },
             badMonitors() {
-                return this.category.monitors.filter(it => it.activeIncidents.length > 0 || !it.last_status).length;
+                return this.category.monitors.map(this.getMonitorStatus).filter(it => it !== MONITOR_STATUS_OPERATIONAL).length;
             },
             monitorsWithIncidents() {
-                return this.category.monitors.filter(it => it.activeIncidents.length > 0).length;
+                return this.category.monitors.map(this.getMonitorStatus).filter(it => it === MONITOR_STATUS_HAS_ACTIVE_INCIDENT).length;
             },
             monitorsDown() {
-                return this.category.monitors.filter(it => !it.last_status).length;
+                return this.category.monitors.map(this.getMonitorStatus).filter(it => it === MONITOR_STATUS_IS_DOWN).length;
             },
             monitorsInMaintenance() {
-                return this.category.monitors.filter(it => it.activeMaintenance.length > 0).length;
+                return this.category.monitors.map(this.getMonitorStatus).filter(it => it === MONITOR_STATUS_MAINTENANCE).length;
             },
             badPercentage() {
                 return (this.badMonitors / this.totalMonitors) * 100;
@@ -108,31 +113,46 @@
             },
         },
         methods: {
-            getMonitorColor(monitor) {
+            getMonitorStatus(monitor) {
                 if (monitor.activeIncidents.length > 0) {
-                    return 'danger';
-                } else if (!monitor.last_status) {
-                    return 'orange';
+                    return MONITOR_STATUS_HAS_ACTIVE_INCIDENT;
                 }
 
                 if (monitor.activeMaintenance.length > 0) {
-                    return 'primary';
+                    return MONITOR_STATUS_MAINTENANCE;
                 }
 
-                return 'success';
+                if (!monitor.last_status) {
+                    return MONITOR_STATUS_IS_DOWN;
+                }
+
+                return MONITOR_STATUS_OPERATIONAL;
+            },
+            getMonitorColor(monitor) {
+                switch (this.getMonitorStatus(monitor)) {
+                    case MONITOR_STATUS_HAS_ACTIVE_INCIDENT:
+                        return 'danger';
+                    case MONITOR_STATUS_MAINTENANCE:
+                        return 'primary';
+                    case MONITOR_STATUS_IS_DOWN:
+                        return 'orange';
+                    case MONITOR_STATUS_OPERATIONAL:
+                    default:
+                        return 'success';
+                }
             },
             getMonitorText(monitor) {
-                if (monitor.activeMaintenance.length > 0) {
-                    return 'MAINTENANCE';
-                } else if (!monitor.last_status) {
-                    return 'DOWN';
+                switch (this.getMonitorStatus(monitor)) {
+                    case MONITOR_STATUS_HAS_ACTIVE_INCIDENT:
+                        return 'HAS INCIDENT';
+                    case MONITOR_STATUS_MAINTENANCE:
+                        return 'MAINTENANCE';
+                    case MONITOR_STATUS_IS_DOWN:
+                        return 'DOWN';
+                    case MONITOR_STATUS_OPERATIONAL:
+                    default:
+                        return 'UP';
                 }
-
-                if (monitor.activeIncidents.length > 0) {
-                    return 'ACTIVE INCIDENT';
-                }
-
-                return 'OPERATIONAL';
             }
         }
     }

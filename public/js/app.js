@@ -1803,6 +1803,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+var MONITOR_STATUS_OPERATIONAL = 'operational';
+var MONITOR_STATUS_MAINTENANCE = 'maintenance';
+var MONITOR_STATUS_IS_DOWN = 'down';
+var MONITOR_STATUS_HAS_ACTIVE_INCIDENT = 'incident';
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['category'],
   data: function data() {
@@ -1818,23 +1822,23 @@ __webpack_require__.r(__webpack_exports__);
       return this.badMonitors === 0 && this.monitorsInMaintenance === 0;
     },
     badMonitors: function badMonitors() {
-      return this.category.monitors.filter(function (it) {
-        return it.activeIncidents.length > 0 || !it.last_status;
+      return this.category.monitors.map(this.getMonitorStatus).filter(function (it) {
+        return it !== MONITOR_STATUS_OPERATIONAL;
       }).length;
     },
     monitorsWithIncidents: function monitorsWithIncidents() {
-      return this.category.monitors.filter(function (it) {
-        return it.activeIncidents.length > 0;
+      return this.category.monitors.map(this.getMonitorStatus).filter(function (it) {
+        return it === MONITOR_STATUS_HAS_ACTIVE_INCIDENT;
       }).length;
     },
     monitorsDown: function monitorsDown() {
-      return this.category.monitors.filter(function (it) {
-        return !it.last_status;
+      return this.category.monitors.map(this.getMonitorStatus).filter(function (it) {
+        return it === MONITOR_STATUS_IS_DOWN;
       }).length;
     },
     monitorsInMaintenance: function monitorsInMaintenance() {
-      return this.category.monitors.filter(function (it) {
-        return it.activeMaintenance.length > 0;
+      return this.category.monitors.map(this.getMonitorStatus).filter(function (it) {
+        return it === MONITOR_STATUS_MAINTENANCE;
       }).length;
     },
     badPercentage: function badPercentage() {
@@ -1876,31 +1880,52 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
-    getMonitorColor: function getMonitorColor(monitor) {
+    getMonitorStatus: function getMonitorStatus(monitor) {
       if (monitor.activeIncidents.length > 0) {
-        return 'danger';
-      } else if (!monitor.last_status) {
-        return 'orange';
+        return MONITOR_STATUS_HAS_ACTIVE_INCIDENT;
       }
 
       if (monitor.activeMaintenance.length > 0) {
-        return 'primary';
+        return MONITOR_STATUS_MAINTENANCE;
       }
 
-      return 'success';
+      if (!monitor.last_status) {
+        return MONITOR_STATUS_IS_DOWN;
+      }
+
+      return MONITOR_STATUS_OPERATIONAL;
+    },
+    getMonitorColor: function getMonitorColor(monitor) {
+      switch (this.getMonitorStatus(monitor)) {
+        case MONITOR_STATUS_HAS_ACTIVE_INCIDENT:
+          return 'danger';
+
+        case MONITOR_STATUS_MAINTENANCE:
+          return 'primary';
+
+        case MONITOR_STATUS_IS_DOWN:
+          return 'orange';
+
+        case MONITOR_STATUS_OPERATIONAL:
+        default:
+          return 'success';
+      }
     },
     getMonitorText: function getMonitorText(monitor) {
-      if (monitor.activeMaintenance.length > 0) {
-        return 'MAINTENANCE';
-      } else if (!monitor.last_status) {
-        return 'DOWN';
-      }
+      switch (this.getMonitorStatus(monitor)) {
+        case MONITOR_STATUS_HAS_ACTIVE_INCIDENT:
+          return 'HAS INCIDENT';
 
-      if (monitor.activeIncidents.length > 0) {
-        return 'ACTIVE INCIDENT';
-      }
+        case MONITOR_STATUS_MAINTENANCE:
+          return 'MAINTENANCE';
 
-      return 'OPERATIONAL';
+        case MONITOR_STATUS_IS_DOWN:
+          return 'DOWN';
+
+        case MONITOR_STATUS_OPERATIONAL:
+        default:
+          return 'UP';
+      }
     }
   }
 });
@@ -2318,9 +2343,13 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     allFine: function allFine() {
+      if (!this.data || !this.data.monitors) return;
       var noIncidents = this.activeIncidents.length === 0;
       var noMaintenance = this.activeMaintenance.length === 0;
-      return noIncidents && noMaintenance;
+      var noneDown = this.data.monitors.filter(function (it) {
+        return it.last_status;
+      }).length === 0;
+      return noIncidents && noMaintenance && noneDown;
     }
   },
   methods: {
