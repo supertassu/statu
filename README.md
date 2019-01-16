@@ -16,6 +16,7 @@ php artisan migrate
 ```
 
 The configuration of Statu is mainly located in `.env` and `config/statu.php`.
+Please change the API keys in `config/statu.php`.
 
 Point your web root directory to `public/`.
 
