@@ -2347,7 +2347,7 @@ __webpack_require__.r(__webpack_exports__);
       var noIncidents = this.activeIncidents.length === 0;
       var noMaintenance = this.activeMaintenance.length === 0;
       var noneDown = this.data.monitors.filter(function (it) {
-        return it.last_status;
+        return !it.last_status;
       }).length === 0;
       return noIncidents && noMaintenance && noneDown;
     }

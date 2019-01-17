@@ -122,7 +122,7 @@
 
                 const noIncidents = this.activeIncidents.length === 0;
                 const noMaintenance = this.activeMaintenance.length === 0;
-                const noneDown = this.data.monitors.filter(it => it.last_status).length === 0;
+                const noneDown = this.data.monitors.filter(it => !it.last_status).length === 0;
 
                 return noIncidents && noMaintenance && noneDown;
             }
