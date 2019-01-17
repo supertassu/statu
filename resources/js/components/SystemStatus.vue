@@ -97,7 +97,7 @@
                     return [];
                 }
 
-                return this.data.maintenances.filter(maintenance => !maintenance.closed);
+                return this.data.maintenances.filter(maintenance => !maintenance.closed && moment(maintenance.start).isBefore(moment()));
             },
 
             categories() {

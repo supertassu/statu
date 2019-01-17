@@ -2317,7 +2317,7 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       return this.data.maintenances.filter(function (maintenance) {
-        return !maintenance.closed;
+        return !maintenance.closed && moment(maintenance.start).isBefore(moment());
       });
     },
     categories: function categories() {
