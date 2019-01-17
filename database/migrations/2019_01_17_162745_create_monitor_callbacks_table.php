@@ -17,6 +17,7 @@ class CreateMonitorCallbacksTable extends Migration
             $table->increments('id');
             $table->integer('monitor_id');
             $table->string('key', 64);
+            $table->string('last_callback'); // iso 8601
 
             $table->timestamps();
         });

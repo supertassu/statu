@@ -13,12 +13,7 @@
 
 Route::get('overview', 'ApiOverviewController@index');
 
-Route::get('monitors', 'ApiMonitorController@index');
-Route::get('monitors/{id}','ApiMonitorController@show');
-
-Route::get('incidents', 'ApiIncidentController@index');
-Route::get('incidents/{id}','ApiIncidentController@show');
-
 // api
 // why get :/
 Route::get('monitors/{id}/set', 'ApiMonitorController@update');
+Route::get('heartbeat', 'ApiHeartbeatHandler@handleHeartbeat');

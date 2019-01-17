@@ -7,13 +7,6 @@ use Illuminate\Http\Request;
 
 class ApiMonitorController extends Controller
 {
-    public function index() {
-        return Monitor::all();
-    }
-
-    public function show($id) {
-        return Monitor::find($id);
-    }
 
     public function update(Request $request, $id) {
         $apiKey = $request->input('api-key');
