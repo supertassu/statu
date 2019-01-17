@@ -131,7 +131,7 @@
         methods: {
             loadData: function() {
                 axios
-                    .get('/api/overview')
+                    .get(apiBaseUrl + 'api/overview')
                     .then(response => {
                         this.data = response.data;
                         this.lastLoaded = moment();

@@ -19,6 +19,7 @@
 
     <script>
         window.dateFormat = '{{ config('statu.date-format', 'MMM Do, HH:mm') }}';
+        window.apiBaseUrl = '{{ config('statu.api-base-url', '/') }}';
     </script>
     <script src="{{ asset('js/app.js') }}" defer></script>
 

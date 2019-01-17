@@ -2356,7 +2356,7 @@ __webpack_require__.r(__webpack_exports__);
     loadData: function loadData() {
       var _this2 = this;
 
-      axios.get('/api/overview').then(function (response) {
+      axios.get(apiBaseUrl + 'api/overview').then(function (response) {
         _this2.data = response.data;
         _this2.lastLoaded = moment();
       }).catch(function (error) {
