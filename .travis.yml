@@ -1,0 +1,20 @@
+language: php
+
+php:
+  - 7.2
+
+before_script:
+  - cp .env.testing .env
+  - mysql -e 'create database homestead_test;'
+  - composer self-update
+  - composer install --no-interaction
+  - composer self-update
+  - composer install --no-interaction
+  - php artisan key:generate
+  - php artisan migrate
+
+services:
+  - mysql
+
+script:
+  - vendor/bin/phpunit
