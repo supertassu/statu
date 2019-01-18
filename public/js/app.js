@@ -1800,9 +1800,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
 var MONITOR_STATUS_OPERATIONAL = 'operational';
 var MONITOR_STATUS_MAINTENANCE = 'maintenance';
 var MONITOR_STATUS_IS_DOWN = 'down';
@@ -1823,7 +1820,7 @@ var MONITOR_STATUS_HAS_ACTIVE_INCIDENT = 'incident';
     },
     badMonitors: function badMonitors() {
       return this.category.monitors.map(this.getMonitorStatus).filter(function (it) {
-        return it !== MONITOR_STATUS_OPERATIONAL;
+        return it === MONITOR_STATUS_HAS_ACTIVE_INCIDENT || it === MONITOR_STATUS_IS_DOWN;
       }).length;
     },
     monitorsWithIncidents: function monitorsWithIncidents() {
@@ -1831,14 +1828,14 @@ var MONITOR_STATUS_HAS_ACTIVE_INCIDENT = 'incident';
         return it === MONITOR_STATUS_HAS_ACTIVE_INCIDENT;
       }).length;
     },
-    monitorsDown: function monitorsDown() {
-      return this.category.monitors.map(this.getMonitorStatus).filter(function (it) {
-        return it === MONITOR_STATUS_IS_DOWN;
-      }).length;
-    },
     monitorsInMaintenance: function monitorsInMaintenance() {
       return this.category.monitors.map(this.getMonitorStatus).filter(function (it) {
         return it === MONITOR_STATUS_MAINTENANCE;
+      }).length;
+    },
+    monitorsDown: function monitorsDown() {
+      return this.category.monitors.map(this.getMonitorStatus).filter(function (it) {
+        return it === MONITOR_STATUS_IS_DOWN;
       }).length;
     },
     badPercentage: function badPercentage() {
@@ -1847,12 +1844,6 @@ var MONITOR_STATUS_HAS_ACTIVE_INCIDENT = 'incident';
     percentageWithIncidents: function percentageWithIncidents() {
       return this.monitorsWithIncidents / this.totalMonitors * 100;
     },
-    percentageDown: function percentageDown() {
-      return this.monitorsDown / this.totalMonitors * 100;
-    },
-    percentageInMaintenance: function percentageInMaintenance() {
-      return this.monitorsInMaintenance / this.totalMonitors * 100;
-    },
     tag: function tag() {
       if (this.isOperational) {
         return '<span class="tag is-success">OPERATIONAL</span>';
@@ -1860,7 +1851,7 @@ var MONITOR_STATUS_HAS_ACTIVE_INCIDENT = 'incident';
 
       var value = '';
 
-      if (this.percentageInMaintenance > 0) {
+      if (this.monitorsInMaintenance > 0) {
         value += '<span class="tag is-primary">MAINTENANCE</span> ';
       }
 
@@ -1895,6 +1886,9 @@ var MONITOR_STATUS_HAS_ACTIVE_INCIDENT = 'incident';
 
       return MONITOR_STATUS_OPERATIONAL;
     },
+    isMonitorUp: function isMonitorUp(monitor) {
+      return monitor.last_status;
+    },
     getMonitorColor: function getMonitorColor(monitor) {
       switch (this.getMonitorStatus(monitor)) {
         case MONITOR_STATUS_HAS_ACTIVE_INCIDENT:
@@ -1914,10 +1908,10 @@ var MONITOR_STATUS_HAS_ACTIVE_INCIDENT = 'incident';
     getMonitorText: function getMonitorText(monitor) {
       switch (this.getMonitorStatus(monitor)) {
         case MONITOR_STATUS_HAS_ACTIVE_INCIDENT:
-          return 'HAS INCIDENT';
+          return 'HAS INCIDENT &nbsp;&nbsp;<small>' + (this.isMonitorUp(monitor) ? '(up)' : '(down)') + '</small>';
 
         case MONITOR_STATUS_MAINTENANCE:
-          return 'MAINTENANCE';
+          return 'MAINTENANCE&nbsp;&nbsp;<small>' + (this.isMonitorUp(monitor) ? '(up)' : '(down)') + '</small>';
 
         case MONITOR_STATUS_IS_DOWN:
           return 'DOWN';
@@ -30583,21 +30577,12 @@ var render = function() {
       _vm._l(_vm.category.monitors, function(monitor) {
         return _c("div", [
           _c("p", [
-            _c(
-              "span",
-              {
-                class: ((_obj = { tag: true }),
-                (_obj["is-" + _vm.getMonitorColor(monitor)] = true),
-                _obj)
-              },
-              [
-                _vm._v(
-                  "\n                    " +
-                    _vm._s(_vm.getMonitorText(monitor)) +
-                    "\n                "
-                )
-              ]
-            ),
+            _c("span", {
+              class: ((_obj = { tag: true }),
+              (_obj["is-" + _vm.getMonitorColor(monitor)] = true),
+              _obj),
+              domProps: { innerHTML: _vm._s(_vm.getMonitorText(monitor)) }
+            }),
             _vm._v(" "),
             _c("strong", [_vm._v(_vm._s(monitor.name))])
           ])

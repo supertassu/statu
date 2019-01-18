@@ -11,9 +11,7 @@
 
             <strong>{{ category.name }}</strong>
 
-            <span style="position: absolute; right: 10px;" v-html="tag">
-
-            </span>
+            <span style="position: absolute; right: 10px;" v-html="tag"></span>
         </div>
 
         <div
@@ -26,8 +24,7 @@
                 v-for="monitor in category.monitors"
             >
                 <p>
-                    <span v-bind:class="{ tag: true, ['is-' + getMonitorColor(monitor)]: true }">
-                        {{ getMonitorText(monitor) }}
+                    <span v-bind:class="{ tag: true, ['is-' + getMonitorColor(monitor)]: true }" v-html="getMonitorText(monitor)">
                     </span>
 
                     <strong>{{ monitor.name }}</strong>
@@ -59,28 +56,22 @@
                 return this.badMonitors === 0 && this.monitorsInMaintenance === 0;
             },
             badMonitors() {
-                return this.category.monitors.map(this.getMonitorStatus).filter(it => it !== MONITOR_STATUS_OPERATIONAL).length;
+                return this.category.monitors.map(this.getMonitorStatus).filter(it => it === MONITOR_STATUS_HAS_ACTIVE_INCIDENT || it === MONITOR_STATUS_IS_DOWN).length;
             },
             monitorsWithIncidents() {
                 return this.category.monitors.map(this.getMonitorStatus).filter(it => it === MONITOR_STATUS_HAS_ACTIVE_INCIDENT).length;
             },
-            monitorsDown() {
-                return this.category.monitors.map(this.getMonitorStatus).filter(it => it === MONITOR_STATUS_IS_DOWN).length;
-            },
             monitorsInMaintenance() {
                 return this.category.monitors.map(this.getMonitorStatus).filter(it => it === MONITOR_STATUS_MAINTENANCE).length;
+            },
+            monitorsDown() {
+                return this.category.monitors.map(this.getMonitorStatus).filter(it => it === MONITOR_STATUS_IS_DOWN).length;
             },
             badPercentage() {
                 return (this.badMonitors / this.totalMonitors) * 100;
             },
             percentageWithIncidents() {
                 return (this.monitorsWithIncidents / this.totalMonitors) * 100;
-            },
-            percentageDown() {
-                return (this.monitorsDown / this.totalMonitors) * 100;
-            },
-            percentageInMaintenance() {
-                return (this.monitorsInMaintenance / this.totalMonitors) * 100;
             },
             tag() {
                 if (this.isOperational) {
@@ -89,7 +80,7 @@
 
                 let value = '';
 
-                if (this.percentageInMaintenance > 0) {
+                if (this.monitorsInMaintenance > 0) {
                     value += '<span class="tag is-primary">MAINTENANCE</span> ';
                 }
 
@@ -128,6 +119,9 @@
 
                 return MONITOR_STATUS_OPERATIONAL;
             },
+            isMonitorUp(monitor) {
+                return monitor.last_status;
+            },
             getMonitorColor(monitor) {
                 switch (this.getMonitorStatus(monitor)) {
                     case MONITOR_STATUS_HAS_ACTIVE_INCIDENT:
@@ -144,9 +138,9 @@
             getMonitorText(monitor) {
                 switch (this.getMonitorStatus(monitor)) {
                     case MONITOR_STATUS_HAS_ACTIVE_INCIDENT:
-                        return 'HAS INCIDENT';
+                        return 'HAS INCIDENT &nbsp;&nbsp;<small>' + (this.isMonitorUp(monitor) ? '(up)' : '(down)') + '</small>';
                     case MONITOR_STATUS_MAINTENANCE:
-                        return 'MAINTENANCE';
+                        return 'MAINTENANCE&nbsp;&nbsp;<small>' + (this.isMonitorUp(monitor) ? '(up)' : '(down)') + '</small>';
                     case MONITOR_STATUS_IS_DOWN:
                         return 'DOWN';
                     case MONITOR_STATUS_OPERATIONAL:
