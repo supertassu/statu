@@ -1,35 +1,36 @@
 <template>
-    <div>
-        <div class="panel-block" v-on:click="detailsOpen = !detailsOpen" style="cursor: pointer;">
-            <span class="icon category-toggler">
+    <div style="margin-bottom: 1em;">
+        <div class="menu-label flex is-marginless" style="cursor: pointer;" v-on:click="detailsOpen = !detailsOpen">
+            <span>
                 <span
                     class="fas"
-                    :class="{[detailsOpen ? 'fa-minus-square' : 'fa-plus-square']: true}"
+                    :class="{[detailsOpen ? 'fa-caret-down' : 'fa-caret-right']: true}"
                     style="color: rgb(127, 127, 127); margin-right: 10px;"
                 ></span>
+
+                <strong>{{ category.name }}</strong>
             </span>
 
-            <strong>{{ category.name }}</strong>
-
-            <span style="position: absolute; right: 10px;" v-html="tag"></span>
+            <span v-html="tag"></span>
         </div>
 
         <div
-            class="panel-block"
-            :id="'details-category-' + category.id"
-            style="border-top: none;"
+            class="menu-list"
             :style="{display: detailsOpen ? 'block' : 'none'}"
         >
-            <div
-                v-for="monitor in category.monitors"
+            <ul
             >
-                <p>
-                    <span v-bind:class="{ tag: true, ['is-' + getMonitorColor(monitor)]: true }" v-html="getMonitorText(monitor)">
-                    </span>
-
+                <li
+                    class="flex"
+                    v-for="monitor in category.monitors"
+                >
                     <strong>{{ monitor.name }}</strong>
-                </p>
-            </div>
+
+                    <span
+                        v-bind:class="{ ['has-text-' + getMonitorColor(monitor)]: true }"
+                        v-html="getMonitorText(monitor)"></span>
+                </li>
+            </ul>
         </div>
     </div>
 
@@ -75,17 +76,17 @@
             },
             tag() {
                 if (this.isOperational) {
-                    return '<span class="tag is-success">OPERATIONAL</span>';
+                    return '<span class="tag is-success">Operational</span>';
                 }
 
                 let value = '';
 
                 if (this.monitorsInMaintenance > 0) {
-                    value += '<span class="tag is-primary">MAINTENANCE</span> ';
+                    value += '<span class="tag is-info">Maintenance</span> ';
                 }
 
                 if (this.badPercentage === 100) {
-                    value += '<span class="tag is-danger">DOWN</span>';
+                    value += '<span class="tag is-danger">Down</span>';
                 } else {
                     if (this.monitorsDown > 0) {
                         value += '<span class="tag is-orange">' +
@@ -125,11 +126,11 @@
             getMonitorColor(monitor) {
                 switch (this.getMonitorStatus(monitor)) {
                     case MONITOR_STATUS_HAS_ACTIVE_INCIDENT:
-                        return 'danger';
-                    case MONITOR_STATUS_MAINTENANCE:
-                        return 'primary';
-                    case MONITOR_STATUS_IS_DOWN:
                         return 'orange';
+                    case MONITOR_STATUS_MAINTENANCE:
+                        return 'info';
+                    case MONITOR_STATUS_IS_DOWN:
+                        return 'danger';
                     case MONITOR_STATUS_OPERATIONAL:
                     default:
                         return 'success';
@@ -138,14 +139,14 @@
             getMonitorText(monitor) {
                 switch (this.getMonitorStatus(monitor)) {
                     case MONITOR_STATUS_HAS_ACTIVE_INCIDENT:
-                        return 'HAS INCIDENT &nbsp;&nbsp;<small>' + (this.isMonitorUp(monitor) ? '(up)' : '(down)') + '</small>';
+                        return (this.isMonitorUp(monitor) ? 'Up' : 'Down') + ' <small>(incident)</small>';
                     case MONITOR_STATUS_MAINTENANCE:
-                        return 'MAINTENANCE&nbsp;&nbsp;<small>' + (this.isMonitorUp(monitor) ? '(up)' : '(down)') + '</small>';
+                        return (this.isMonitorUp(monitor) ? 'Up' : 'Down') + ' <small>(maintenance)</small>';
                     case MONITOR_STATUS_IS_DOWN:
-                        return 'DOWN';
+                        return 'Outage';
                     case MONITOR_STATUS_OPERATIONAL:
                     default:
-                        return 'UP';
+                        return 'Operational';
                 }
             }
         }

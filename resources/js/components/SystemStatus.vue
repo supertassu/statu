@@ -59,13 +59,13 @@
                 All services
             </h1>
 
-            <div class="panel">
+            <aside class="menu">
                 <category
                     v-for="category in categories"
                     :category="category"
                     :key="'category-' + category.id"
                 ></category>
-            </div>
+            </aside>
         </div>
 
     </section>

@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command(CheckHeartbeats::class)->everyTenMinutes();
+        $schedule->command(CheckHeartbeats::class)->everyMinute();
     }
 
     /**

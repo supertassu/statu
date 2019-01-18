@@ -8,7 +8,7 @@
                     </h1>
 
                     <div class="tags" style="margin-bottom: 0;">
-                        <span class="tag is-primary">Started at</span>
+                        <span class="tag is-info">Started at</span>
                         <span class="tag">
                             {{ maintenance.start | moment() }}
                             ({{ maintenance.start | moment('from', 'now') }})
@@ -16,7 +16,7 @@
                     </div>
 
                     <div class="tags" style="margin-bottom: 0;">
-                        <span class="tag is-primary">Scheduled end date</span>
+                        <span class="tag is-info">Scheduled end date</span>
                         <span class="tag">
                             {{ maintenance.scheduled_end | moment() }}
                             ({{ maintenance.scheduled_end | moment('from', 'now') }})
@@ -24,7 +24,7 @@
                     </div>
 
                     <div class="tags" v-if="maintenance.affected_components">
-                        <span class="tag is-primary">Affected components</span>
+                        <span class="tag is-info">Affected components</span>
 
                         <span
                             v-for="component in maintenance.affected_components"
@@ -82,7 +82,7 @@
                     case 'monitoring':
                         return 'link';
                     case 'investigating':
-                        return 'primary';
+                        return 'info';
                     case 're-opened':
                         return 'danger';
                     case 'solved':

@@ -1800,6 +1800,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 var MONITOR_STATUS_OPERATIONAL = 'operational';
 var MONITOR_STATUS_MAINTENANCE = 'maintenance';
 var MONITOR_STATUS_IS_DOWN = 'down';
@@ -1846,17 +1847,17 @@ var MONITOR_STATUS_HAS_ACTIVE_INCIDENT = 'incident';
     },
     tag: function tag() {
       if (this.isOperational) {
-        return '<span class="tag is-success">OPERATIONAL</span>';
+        return '<span class="tag is-success">Operational</span>';
       }
 
       var value = '';
 
       if (this.monitorsInMaintenance > 0) {
-        value += '<span class="tag is-primary">MAINTENANCE</span> ';
+        value += '<span class="tag is-info">Maintenance</span> ';
       }
 
       if (this.badPercentage === 100) {
-        value += '<span class="tag is-danger">DOWN</span>';
+        value += '<span class="tag is-danger">Down</span>';
       } else {
         if (this.monitorsDown > 0) {
           value += '<span class="tag is-orange">' + "".concat(this.monitorsDown, " service").concat(this.monitorsDown === 1 ? '' : 's', " out of ") + "".concat(this.totalMonitors, " ").concat(this.monitorsDown === 1 ? 'is' : 'are', " down</span> ");
@@ -1892,13 +1893,13 @@ var MONITOR_STATUS_HAS_ACTIVE_INCIDENT = 'incident';
     getMonitorColor: function getMonitorColor(monitor) {
       switch (this.getMonitorStatus(monitor)) {
         case MONITOR_STATUS_HAS_ACTIVE_INCIDENT:
-          return 'danger';
+          return 'orange';
 
         case MONITOR_STATUS_MAINTENANCE:
-          return 'primary';
+          return 'info';
 
         case MONITOR_STATUS_IS_DOWN:
-          return 'orange';
+          return 'danger';
 
         case MONITOR_STATUS_OPERATIONAL:
         default:
@@ -1908,17 +1909,17 @@ var MONITOR_STATUS_HAS_ACTIVE_INCIDENT = 'incident';
     getMonitorText: function getMonitorText(monitor) {
       switch (this.getMonitorStatus(monitor)) {
         case MONITOR_STATUS_HAS_ACTIVE_INCIDENT:
-          return 'HAS INCIDENT &nbsp;&nbsp;<small>' + (this.isMonitorUp(monitor) ? '(up)' : '(down)') + '</small>';
+          return (this.isMonitorUp(monitor) ? 'Up' : 'Down') + ' <small>(incident)</small>';
 
         case MONITOR_STATUS_MAINTENANCE:
-          return 'MAINTENANCE&nbsp;&nbsp;<small>' + (this.isMonitorUp(monitor) ? '(up)' : '(down)') + '</small>';
+          return (this.isMonitorUp(monitor) ? 'Up' : 'Down') + ' <small>(maintenance)</small>';
 
         case MONITOR_STATUS_IS_DOWN:
-          return 'DOWN';
+          return 'Outage';
 
         case MONITOR_STATUS_OPERATIONAL:
         default:
-          return 'UP';
+          return 'Operational';
       }
     }
   }
@@ -2175,7 +2176,7 @@ __webpack_require__.r(__webpack_exports__);
           return 'link';
 
         case 'investigating':
-          return 'primary';
+          return 'info';
 
         case 're-opened':
           return 'danger';
@@ -30532,11 +30533,11 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
+  return _c("div", { staticStyle: { "margin-bottom": "1em" } }, [
     _c(
       "div",
       {
-        staticClass: "panel-block",
+        staticClass: "menu-label flex is-marginless",
         staticStyle: { cursor: "pointer" },
         on: {
           click: function($event) {
@@ -30545,51 +30546,47 @@ var render = function() {
         }
       },
       [
-        _c("span", { staticClass: "icon category-toggler" }, [
+        _c("span", [
           _c("span", {
             staticClass: "fas",
             class: ((_obj = {}),
-            (_obj[
-              _vm.detailsOpen ? "fa-minus-square" : "fa-plus-square"
-            ] = true),
+            (_obj[_vm.detailsOpen ? "fa-caret-down" : "fa-caret-right"] = true),
             _obj),
             staticStyle: { color: "rgb(127, 127, 127)", "margin-right": "10px" }
-          })
+          }),
+          _vm._v(" "),
+          _c("strong", [_vm._v(_vm._s(_vm.category.name))])
         ]),
         _vm._v(" "),
-        _c("strong", [_vm._v(_vm._s(_vm.category.name))]),
-        _vm._v(" "),
-        _c("span", {
-          staticStyle: { position: "absolute", right: "10px" },
-          domProps: { innerHTML: _vm._s(_vm.tag) }
-        })
+        _c("span", { domProps: { innerHTML: _vm._s(_vm.tag) } })
       ]
     ),
     _vm._v(" "),
     _c(
       "div",
       {
-        staticClass: "panel-block",
-        staticStyle: { "border-top": "none" },
-        style: { display: _vm.detailsOpen ? "block" : "none" },
-        attrs: { id: "details-category-" + _vm.category.id }
+        staticClass: "menu-list",
+        style: { display: _vm.detailsOpen ? "block" : "none" }
       },
-      _vm._l(_vm.category.monitors, function(monitor) {
-        return _c("div", [
-          _c("p", [
-            _c("span", {
-              class: ((_obj = { tag: true }),
-              (_obj["is-" + _vm.getMonitorColor(monitor)] = true),
-              _obj),
-              domProps: { innerHTML: _vm._s(_vm.getMonitorText(monitor)) }
-            }),
-            _vm._v(" "),
-            _c("strong", [_vm._v(_vm._s(monitor.name))])
-          ])
-        ])
-        var _obj
-      }),
-      0
+      [
+        _c(
+          "ul",
+          _vm._l(_vm.category.monitors, function(monitor) {
+            return _c("li", { staticClass: "flex" }, [
+              _c("strong", [_vm._v(_vm._s(monitor.name))]),
+              _vm._v(" "),
+              _c("span", {
+                class: ((_obj = {}),
+                (_obj["has-text-" + _vm.getMonitorColor(monitor)] = true),
+                _obj),
+                domProps: { innerHTML: _vm._s(_vm.getMonitorText(monitor)) }
+              })
+            ])
+            var _obj
+          }),
+          0
+        )
+      ]
     )
   ])
   var _obj
@@ -30855,7 +30852,7 @@ var render = function() {
               "div",
               { staticClass: "tags", staticStyle: { "margin-bottom": "0" } },
               [
-                _c("span", { staticClass: "tag is-primary" }, [
+                _c("span", { staticClass: "tag is-info" }, [
                   _vm._v("Started at")
                 ]),
                 _vm._v(" "),
@@ -30877,7 +30874,7 @@ var render = function() {
               "div",
               { staticClass: "tags", staticStyle: { "margin-bottom": "0" } },
               [
-                _c("span", { staticClass: "tag is-primary" }, [
+                _c("span", { staticClass: "tag is-info" }, [
                   _vm._v("Scheduled end date")
                 ]),
                 _vm._v(" "),
@@ -30904,7 +30901,7 @@ var render = function() {
                   "div",
                   { staticClass: "tags" },
                   [
-                    _c("span", { staticClass: "tag is-primary" }, [
+                    _c("span", { staticClass: "tag is-info" }, [
                       _vm._v("Affected components")
                     ]),
                     _vm._v(" "),
@@ -31110,8 +31107,8 @@ var render = function() {
                   ]),
                   _vm._v(" "),
                   _c(
-                    "div",
-                    { staticClass: "panel" },
+                    "aside",
+                    { staticClass: "menu" },
                     _vm._l(_vm.categories, function(category) {
                       return _c("category", {
                         key: "category-" + category.id,
