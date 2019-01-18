@@ -12,15 +12,14 @@
     </title>
 
     <link rel="preload" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
-          integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
-          as="style" onload="this.rel = 'stylesheet'"
-          crossorigin="anonymous">
+          as="style" onload="this.rel = 'stylesheet'">
 
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
     <script>
         window.dateFormat = '{{ config('statu.date-format', 'MMM Do, HH:mm') }}';
         window.apiBaseUrl = '{{ config('statu.api-base-url', '/') }}';
+        window.refreshTime = parseInt('{{ config('statu.refresh-time', 30) }}');
     </script>
     <script src="{{ asset('js/app.js') }}" defer></script>
 

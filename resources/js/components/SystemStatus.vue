@@ -5,7 +5,7 @@
 
     <section v-else>
         <div v-if="lastLoaded" class="has-text-right">
-            <small>Data was last updated at {{ lastLoaded.format('HH:mm:ss') }}. Data will be updated automatically every 30 seconds.</small>
+            <small>Data was last updated at {{ lastLoaded.format('HH:mm:ss') }}. Data will be updated automatically every {{ refreshTime }} seconds.</small>
         </div>
 
         <loading v-if="loading"></loading>
@@ -75,6 +75,7 @@
     export default {
         data() {
             return {
+                refreshTime: window.refreshTime,
                 lastLoaded: null,
                 data: null,
                 components: null,
@@ -145,9 +146,7 @@
         },
 
         mounted() {
-            setInterval(function () {
-                this.loadData();
-            }.bind(this), 30000);
+            setInterval(() => this.loadData(), refreshTime * 1000);
 
             this.loadData();
         }

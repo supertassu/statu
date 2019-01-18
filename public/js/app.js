@@ -2294,6 +2294,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      refreshTime: window.refreshTime,
       lastLoaded: null,
       data: null,
       components: null,
@@ -2368,9 +2369,11 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   mounted: function mounted() {
+    var _this3 = this;
+
     setInterval(function () {
-      this.loadData();
-    }.bind(this), 30000);
+      return _this3.loadData();
+    }, refreshTime * 1000);
     this.loadData();
   }
 });
@@ -31056,7 +31059,9 @@ var render = function() {
                   _vm._v(
                     "Data was last updated at " +
                       _vm._s(_vm.lastLoaded.format("HH:mm:ss")) +
-                      ". Data will be updated automatically every 30 seconds."
+                      ". Data will be updated automatically every " +
+                      _vm._s(_vm.refreshTime) +
+                      " seconds."
                   )
                 ])
               ])
