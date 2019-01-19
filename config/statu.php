@@ -7,7 +7,7 @@ return [
     'refresh-time' => 30,
 
     'expand-categories-by-default' => true,
-    'default-theme' => 'dark',
+    'default-theme' => 'light',
 
     // date & time settings
     'date-format' => 'MMM Do, HH:mm',
