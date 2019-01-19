@@ -105,6 +105,14 @@
             },
             shortDesc() {
                 if (this.noProblems) {
+                    if (this.monitorAmount === 0) {
+                        return 'No services.';
+                    }
+
+                    if (this.monitorAmount === 1) {
+                        return 'The service is operational.';
+                    }
+
                     return `All ${this.monitorAmount} services are up. ` ;
                 }
 

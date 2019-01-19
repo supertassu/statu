@@ -1910,6 +1910,14 @@ var MONITOR_STATUS_HAS_ACTIVE_INCIDENT = 'incident';
     },
     shortDesc: function shortDesc() {
       if (this.noProblems) {
+        if (this.monitorAmount === 0) {
+          return 'No services.';
+        }
+
+        if (this.monitorAmount === 1) {
+          return 'The service is operational.';
+        }
+
         return "All ".concat(this.monitorAmount, " services are up. ");
       }
 
