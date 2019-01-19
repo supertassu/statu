@@ -47518,6 +47518,7 @@ webpackContext.id = "./resources/js sync recursive \\.vue$/";
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+document.getElementById('whoopsie').setAttribute('style', 'display: none;');
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 window.$ = window.jQuery = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 window.moment = __webpack_require__(/*! moment */ "./node_modules/moment/moment.js");

@@ -8,6 +8,11 @@
         {!! config('statu.title') !!}
     </p>
 
-    <system-status></system-status>
+    <div id="whoopsie">
+        <div class="notification is-danger">
+            Looks like something went wrong. Please try again.
+        </div>
+    </div>
 
+    <system-status></system-status>
 @endsection

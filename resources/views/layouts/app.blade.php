@@ -14,7 +14,7 @@
     <link rel="preload" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
           as="style" onload="this.rel = 'stylesheet'">
 
-    @if (Request::query('dark') === 'true')
+    @if ($theme === 'dark')
         <link href="{{ asset('css/dark.css') }}" rel="stylesheet">
     @else
         <link href="{{ asset('css/light.css') }}" rel="stylesheet">
@@ -34,19 +34,16 @@
 
 <section class="section" id="app">
     <div class="container">
-        <small style="margin-top: 15px;">
-            @if (Request::query('dark') === 'true')
-                <a href="?dark=false">Use light theme</a>
-            @else
-                <a href="?dark=true">Use dark theme</a>
-            @endif
-        </small>
-
         @yield('content')
 
         <p style="margin-top: 15px;">
             Powered by <strong><a href="https://github.com/supertassu/statu">Statu</a></strong>
             <a href="https://github.com/supertassu/statu/commit/{{ \App\ApplicationVersion::instance()->getLongHash() }}">{{ \App\ApplicationVersion::instance()->get() }}</a>.
+            @if ($theme === 'dark')
+                <a href="?theme=light">Use light theme</a>.
+            @else
+                <a href="?theme=dark">Use dark theme</a>.
+            @endif
         </p>
     </div>
 </section>

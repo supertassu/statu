@@ -1,3 +1,5 @@
+document.getElementById('whoopsie').setAttribute('style', 'display: none;');
+
 window.Vue = require('vue');
 window.$ = window.jQuery = require('jquery');
 
