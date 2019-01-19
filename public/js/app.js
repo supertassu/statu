@@ -1778,10 +1778,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['categories'],
-  created: function created() {
-    console.log(this.categories);
-  }
+  props: ['categories']
 });
 
 /***/ }),
@@ -1918,7 +1915,7 @@ var MONITOR_STATUS_HAS_ACTIVE_INCIDENT = 'incident';
           return 'The service is operational.';
         }
 
-        return "All ".concat(this.monitorAmount, " services are up. ");
+        return "All ".concat(this.monitorAmount, " services are operational.");
       }
 
       var value = '';

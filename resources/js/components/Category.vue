@@ -113,7 +113,7 @@
                         return 'The service is operational.';
                     }
 
-                    return `All ${this.monitorAmount} services are up. ` ;
+                    return `All ${this.monitorAmount} services are operational.` ;
                 }
 
                 let value = '';

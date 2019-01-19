@@ -14,9 +14,6 @@
 
 <script>
     export default {
-        props: ['categories'],
-        created() {
-            console.log(this.categories);
-        }
+        props: ['categories']
     };
 </script>
