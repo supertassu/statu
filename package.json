@@ -22,6 +22,7 @@
         "vue-template-compiler": "^2.5.21"
     },
     "dependencies": {
+        "bulmaswatch": "^0.7.2",
         "vue-moment": "^4.0.0"
     }
 }

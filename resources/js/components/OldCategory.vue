@@ -1,61 +1,25 @@
 <template>
-    <div class="category-box">
-        <div class="category">
-            <div class="category-names" style="cursor: pointer;" v-on:click="detailsOpen = !detailsOpen">
+    <div style="margin-bottom: 1em;">
+        <div class="menu-label flex is-marginless" style="cursor: pointer;" v-on:click="detailsOpen = !detailsOpen">
+            <span>
                 <span
                     class="fas"
                     :class="{[detailsOpen ? 'fa-caret-down' : 'fa-caret-right']: true}"
                     style="color: rgb(127, 127, 127); margin-right: 10px;"
                 ></span>
 
-                <strong class="category-name">{{ category.name }}</strong><br/>
-                <small v-html="shortDesc"></small>
-            </div>
+                <strong>{{ category.name }}</strong>
+            </span>
 
-            <div class="category-stats">
-                <div class="stat">
-                    <span class="name">
-                        SERVICES UP
-                    </span>
-
-                    <span class="value">
-                        {{ monitorsUp }} / {{ monitorAmount }}
-                    </span>
-                </div>
-
-                <!--
-                <div class="stat">
-                    <span class="name">
-                        SERVICES UP
-                    </span>
-
-                    <span class="value">
-                        {{ monitorsUp }} / {{ monitorAmount }}
-                    </span>
-                </div>
-
-                <div class="stat">
-                    <span class="name">
-                        SERVICES UP
-                    </span>
-
-                    <span class="value">
-                        {{ monitorsUp }} / {{ monitorAmount }}
-                    </span>
-                </div>
-                -->
-            </div>
-
-            <div class="category-graph">
-                <!-- the graph goes here -->
-            </div>
+            <span v-html="tag"></span>
         </div>
 
         <div
-            class="services"
+            class="menu-list"
             :style="{display: detailsOpen ? 'block' : 'none'}"
         >
-            <ul>
+            <ul
+            >
                 <li
                     class="flex"
                     v-for="monitor in category.monitors"
@@ -69,6 +33,7 @@
             </ul>
         </div>
     </div>
+
 </template>
 
 <script>
@@ -81,21 +46,18 @@
         props: ['category'],
         data() {
             return {
-                detailsOpen: window.expandCategoriesByDefault
-            }
+                detailsOpen: false
+            };
         },
         computed: {
-            monitorAmount() {
+            totalMonitors() {
                 return this.category.monitors.length;
             },
-            noProblems() {
-                return this.category.monitors.map(this.getMonitorStatus).filter(it => it === MONITOR_STATUS_OPERATIONAL).length === this.monitorAmount;
+            isOperational() {
+                return this.badMonitors === 0 && this.monitorsInMaintenance === 0;
             },
-            monitorsUp() {
-                return this.category.monitors.filter(this.isMonitorUp).length;
-            },
-            monitorsDown() {
-                return this.category.monitors.filter(it => !this.isMonitorUp(it)).length;
+            badMonitors() {
+                return this.category.monitors.map(this.getMonitorStatus).filter(it => it === MONITOR_STATUS_HAS_ACTIVE_INCIDENT || it === MONITOR_STATUS_IS_DOWN).length;
             },
             monitorsWithIncidents() {
                 return this.category.monitors.map(this.getMonitorStatus).filter(it => it === MONITOR_STATUS_HAS_ACTIVE_INCIDENT).length;
@@ -103,27 +65,44 @@
             monitorsInMaintenance() {
                 return this.category.monitors.map(this.getMonitorStatus).filter(it => it === MONITOR_STATUS_MAINTENANCE).length;
             },
-            shortDesc() {
-                if (this.noProblems) {
-                    return `All ${this.monitorAmount} services are up. ` ;
+            monitorsDown() {
+                return this.category.monitors.map(this.getMonitorStatus).filter(it => it === MONITOR_STATUS_IS_DOWN).length;
+            },
+            badPercentage() {
+                return (this.badMonitors / this.totalMonitors) * 100;
+            },
+            percentageWithIncidents() {
+                return (this.monitorsWithIncidents / this.totalMonitors) * 100;
+            },
+            tag() {
+                if (this.isOperational) {
+                    return '<span class="tag is-success">Operational</span>';
                 }
 
                 let value = '';
 
                 if (this.monitorsInMaintenance > 0) {
-                    value += `${this.monitorsInMaintenance} service${this.monitorsInMaintenance > 1 ? 's are' : ' is'} in maintenance. `;
+                    value += '<span class="tag is-info">Maintenance</span> ';
                 }
 
-                if (this.monitorsWithIncidents > 0) {
-                    value += `${this.monitorsWithIncidents} service${this.monitorsWithIncidents > 1 ? 's have' : ' has'} an incident. `;
+                if (this.badPercentage === 100) {
+                    value += '<span class="tag is-danger">Down</span>';
+                } else {
+                    if (this.monitorsDown > 0) {
+                        value += '<span class="tag is-orange">' +
+                            `${this.monitorsDown} service${this.monitorsDown === 1 ? '' : 's'} out of ` +
+                            `${this.totalMonitors} ${this.monitorsDown === 1 ? 'is' : 'are'} down</span> `;
+                    }
+
+                    if (this.monitorsWithIncidents > 0) {
+                        value += '<span class="tag is-orange">' +
+                            `${this.monitorsWithIncidents} service${this.monitorsWithIncidents === 1 ? '' : 's'} out of ` +
+                            `${this.totalMonitors} ${this.monitorsWithIncidents === 1 ? 'has' : 'have'} an active incident</span> `;
+                    }
                 }
 
-                if (value.length > 0) {
-                    return value;
-                }
-
-                return `${this.monitorsDown} service${this.monitorsDown > 1 ? 's are' : ' is'} down.`;
-            }
+                return value;
+            },
         },
         methods: {
             getMonitorStatus(monitor) {
@@ -141,11 +120,9 @@
 
                 return MONITOR_STATUS_OPERATIONAL;
             },
-
             isMonitorUp(monitor) {
                 return monitor.last_status;
             },
-
             getMonitorColor(monitor) {
                 switch (this.getMonitorStatus(monitor)) {
                     case MONITOR_STATUS_HAS_ACTIVE_INCIDENT:
@@ -159,7 +136,6 @@
                         return 'success';
                 }
             },
-
             getMonitorText(monitor) {
                 switch (this.getMonitorStatus(monitor)) {
                     case MONITOR_STATUS_HAS_ACTIVE_INCIDENT:
@@ -174,5 +150,5 @@
                 }
             }
         }
-    };
+    }
 </script>

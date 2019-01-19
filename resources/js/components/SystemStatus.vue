@@ -55,27 +55,20 @@
                 style="margin-top: 10px;"
             ></div>
 
-            <h1 class="title">
-                All services
-            </h1>
-
-            <aside class="menu">
-                <category
-                    v-for="category in categories"
-                    :category="category"
-                    :key="'category-' + category.id"
-                ></category>
-            </aside>
+            <categories :categories="categories"></categories>
         </div>
 
     </section>
 </template>
 
 <script>
+    import OldCategory from "./OldCategory";
     export default {
+        components: {OldCategory},
         data() {
             return {
                 refreshTime: window.refreshTime,
+                enableExperiementalCategoryView: window.enableExperiementalCategoryView,
                 lastLoaded: null,
                 data: null,
                 components: null,

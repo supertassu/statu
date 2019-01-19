@@ -14,12 +14,17 @@
     <link rel="preload" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css"
           as="style" onload="this.rel = 'stylesheet'">
 
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    @if (Request::query('dark') === 'true')
+        <link href="{{ asset('css/dark.css') }}" rel="stylesheet">
+    @else
+        <link href="{{ asset('css/light.css') }}" rel="stylesheet">
+    @endif
 
     <script>
         window.dateFormat = '{{ config('statu.date-format', 'MMM Do, HH:mm') }}';
         window.apiBaseUrl = '{{ config('statu.api-base-url', '/') }}';
         window.refreshTime = parseInt('{{ config('statu.refresh-time', 30) }}');
+        window.expandCategoriesByDefault = '{{ config('statu.expand-categories-by-default', true) }}' === '1';
     </script>
     <script src="{{ asset('js/app.js') }}" defer></script>
 
@@ -29,6 +34,14 @@
 
 <section class="section" id="app">
     <div class="container">
+        <small style="margin-top: 15px;">
+            @if (Request::query('dark') === 'true')
+                <a href="?dark=false">Use light theme</a>
+            @else
+                <a href="?dark=true">Use dark theme</a>
+            @endif
+        </small>
+
         @yield('content')
 
         <p style="margin-top: 15px;">
