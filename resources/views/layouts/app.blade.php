@@ -45,7 +45,8 @@
         @yield('content')
 
         <p style="margin-top: 15px;">
-            Powered by <strong><a href="https://github.com/supertassu/statu">Statu</a></strong>.
+            Powered by <strong><a href="https://github.com/supertassu/statu">Statu</a></strong>
+            <a href="https://github.com/supertassu/statu/commit/{{ \App\ApplicationVersion::instance()->getLongHash() }}">{{ \App\ApplicationVersion::instance()->get() }}</a>.
         </p>
     </div>
 </section>
