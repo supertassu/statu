@@ -15,7 +15,7 @@ class CreateIncidentUpdatesTable extends Migration
     {
         Schema::create('incident_updates', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('incident_id');
+            $table->integer('incident_id')->unsigned();
             $table->foreign('incident_id')
                 ->references('id')->on('incidents')
                 ->onDelete('cascade');
